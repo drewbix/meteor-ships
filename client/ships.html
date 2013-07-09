@@ -1,0 +1,63 @@
+<head>
+  <title>ships</title> 
+</head>
+
+<body>
+<div id="main">
+	<h1>Ships Game</h1>
+	{{> player}}
+    {{#if currentUser}}
+        {{> planets}}
+  		{{> ship}}
+  		{{> barracks}}
+    {{else}}
+        <p>You must be logged in to play.</p>
+    {{/if}}		
+
+</div>  
+</body>
+
+<template name="planets">
+{{#if show }}
+<p>Choose a planet:
+  <select id="planetSelect">
+  	<option value="">-- Select --</option>
+  	{{#each planets}}
+  	<option value="{{name}}">{{name}}</option>
+  	{{/each}}
+  </select>
+</p>
+{{/if}}
+</template>
+
+<template name="player">
+<div id="account">
+    {{#if currentUser}}
+        Logged in as <strong>{{username}}</strong> (<a href="" id="logoutButton">Log out</a>)
+    {{else}}
+        {{loginButtons align="right"}}
+    {{/if}}	
+</div>
+</template>
+
+<template name="ship">
+<p>You are on planet {{planet}}.</p>
+<h3>Fuel</h3>
+<div class="progressbar">
+	<div class="progress" style="width:{{fuelPercent}}%">&nbsp;</div>
+</div>
+<p>{{fuelLevel}} / 2000</p>
+</template>
+
+<template name="barracks">
+<div class="barracks">
+	<p>The follow soldiers are available for hire:</p>
+	{{#each soldiers}}
+		<div class="soldier">
+		Name: {{name}}<br />
+		Level: {{level}} | Exp: {{exp}}<br />
+		Health: {{health}} | Accuracy: {{accuracy}}
+		</div>
+	{{/each}}
+</div>
+</template>

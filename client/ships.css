@@ -1,0 +1,52 @@
+/* CSS declarations go here */
+* {
+	box-sizing: border-box;
+}
+html {
+	height:100%;
+}
+body {
+	background-color:#CCC;
+	margin:0;
+	padding:0;
+	height:100%;
+	display:block;
+}
+h1 {
+	margin:0;
+	padding:0;
+}
+#main {
+	padding:10px;
+	width:1000px;
+	margin:0 auto;
+	background-color:#FFF;
+	height:100%;
+	position:relative;
+}
+#account {
+	border:1px solid black;
+	margin:10px;
+	padding:5px;
+	position:absolute;
+	right:0;
+	top:0;
+}
+.progressbar {
+	width:200px;
+	height:25px;
+	border:1px solid #CCC;
+}
+.progress {
+	height:100%;
+	background-color: orange;
+
+}
+
+.soldier {
+	width:300px;
+	border:1px solid #ccc;
+	border-radius:5px;
+	margin:5px;
+	padding:5px;
+}
