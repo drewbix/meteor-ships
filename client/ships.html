@@ -41,12 +41,15 @@
 </template>
 
 <template name="ship">
-<p>You are on planet {{planet}}.</p>
-<h3>Fuel</h3>
-<div class="progressbar">
-	<div class="progress" style="width:{{fuelPercent}}%">&nbsp;</div>
+<div id="ship">
+  <p>You are on planet {{planet}}.</p>
+  <h3>Fuel</h3>
+  <div class="progressbar">
+  	<div class="progress" style="width:{{fuelPercent}}%">&nbsp;</div>
+  </div>
+  <p>{{fuelLevel}} / 2000</p>
+  <p>You have {{soldierCount}} soldiers</p>
 </div>
-<p>{{fuelLevel}} / 2000</p>
 </template>
 
 <template name="barracks">
@@ -56,7 +59,8 @@
 		<div class="soldier">
 		Name: {{name}}<br />
 		Level: {{level}} | Exp: {{exp}}<br />
-		Health: {{health}} | Accuracy: {{accuracy}}
+		Health: {{health}} | Accuracy: {{accuracy}}<br />
+    <a href="" class="hireButton" id="{{_id}}"> HIRE <a>
 		</div>
 	{{/each}}
 </div>

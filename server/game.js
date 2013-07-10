@@ -87,7 +87,26 @@ Meteor.methods({
     if (player.fuel >= distance) {
       Users.update({_id: player_id},
                    {$set: {planet: newPlanet}, $inc: {fuel: -(distance)}});
+    }  
+  },
+  hire: function(player_id, soldier_id) {
+    check(player_id, String);
+    check(soldier_id, String);
+    soldier = Soldiers.findOne({_id: soldier_id});
+    player = Users.findOne({_id: player_id});
+    planet = Planets.findOne({name: player.planet});
+    if (!soldier || soldier.owned == true) {
+      return
     }
+    if (player.soldierCount < 5) {
+      Soldiers.update({_id: soldier_id},
+                     {$set: {owned: true}});
+      Users.update({_id: player_id},
+                     {$push: {soldiers: soldier_id}, $inc: {soldierCount: 1}});
+      Planets.update({_id: planet._id}, 
+                     {$pull: {soldiers: soldier_id}, $inc: {soldierCount: -1}});
+    }
+
   }
 });
 

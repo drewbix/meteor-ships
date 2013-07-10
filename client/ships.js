@@ -92,7 +92,15 @@ if (Meteor.isClient) {
       planet = player.planet
     }
     return planet;
-  }  
+  }
+  Template.ship.soldierCount = function () {
+    count = 0;
+    player = Users.findOne({_id: Meteor.userId()});
+    if (player) {
+      count = player.soldierCount;
+    }
+    return count;    
+  }
   Template.ship.fuelLevel = function () {
     fuel = 0;
     player = Users.findOne({_id: Meteor.userId()});
@@ -128,6 +136,14 @@ if (Meteor.isClient) {
     }
     return soldiersHere;
   }
+  Template.barracks.events({
+    'click .hireButton': function(evt) {
+      evt.preventDefault();
+      //alert(this._id);
+      Meteor.call('hire', Meteor.userId(), this._id);
+    }
+  });
+
 }
 
 //////
