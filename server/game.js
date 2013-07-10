@@ -3,6 +3,7 @@ Accounts.onCreateUser(function(options, user) {
   user.fuel = 1000;
   user.planet = "Jute";
   user.idle = false;
+  user.soldierCount = 0;
   
   // We still want the default hook's 'profile' behavior.
   if (options.profile)
