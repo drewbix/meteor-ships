@@ -109,6 +109,9 @@ Meteor.setInterval(function () {
   Users.update({fuel: {$lt : 2000}},
                 {$inc: {fuel: 100}}, 
                 {multi: true});
+  Users.update({fuel: {$gt : 2000}},
+                {$set: {fuel: 2000}}, 
+                {multi: true});
   populate();
 }, 1000);
 
