@@ -7,9 +7,12 @@
 	<h1>Ships Game</h1>
 	{{> player}}
     {{#if currentUser}}
-        {{> planets}}
-  		{{> ship}}
-  		{{> barracks}}
+      {{> planets}}
+      {{> barracks}}
+      <div class="sidebar">
+        {{> ship}}
+        {{> mysoldiers}}
+      </div>
     {{else}}
         <p>You must be logged in to play.</p>
     {{/if}}		
@@ -64,4 +67,15 @@
 		</div>
 	{{/each}}
 </div>
+</template>
+
+<template name="mysoldiers">
+{{#if show}}
+<div id="mysoldiers">
+  <h3>Your Soldiers</h3>
+  {{#each soldiers}}
+    <p>{{name}}</p>
+  {{/each}}
+</div>
+{{/if}}
 </template>

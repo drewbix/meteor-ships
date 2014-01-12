@@ -132,6 +132,7 @@ Meteor.setInterval(function () {
   Users.update({fuel: {$gt : 2000}},
                 {$set: {fuel: 2000}}, 
                 {multi: true});
+  //generate soldiers
   populate();
 }, 1000);
 

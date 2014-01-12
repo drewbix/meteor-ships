@@ -143,6 +143,25 @@ if (Meteor.isClient) {
       Meteor.call('hire', Meteor.userId(), this._id);
     }
   });
+  //
+  // Soldiers template
+  //
+  Template.mysoldiers.show = function() {
+    return true;
+  }
+  Template.mysoldiers.soldiers = function() {
+    mySoldiers = [];
+    user = Users.findOne({_id: Meteor.userId()});
+    if (user != null && user != undefined) {
+      allSoldiers = user.soldiers;
+      if (allSoldiers != null && allSoldiers != undefined) {
+        for (i = 0; i < allSoldiers.length; i++) {
+          mySoldiers.push(Soldiers.findOne({_id: allSoldiers[i]}));
+        }
+      }
+    }
+    return mySoldiers;
+  }
 
 }
 
