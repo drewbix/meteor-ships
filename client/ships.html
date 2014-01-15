@@ -16,9 +16,15 @@
     {{else}}
         <p>You must be logged in to play.</p>
     {{/if}}		
-
 </div>  
+{{> starfield}}
 </body>
+
+<template name="starfield">
+{{#constant}}
+  <div class="starfield"></div>
+{{/constant}}
+</template>
 
 <template name="planets">
 {{#if show }}

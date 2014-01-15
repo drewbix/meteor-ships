@@ -1,32 +1,8 @@
 function getDistance(planet1, planet2) {
   planet = Planets.findOne({name: planet1});
-  switch(planet2) {
-    case "Jute":
-      distance = planet.distances.Jute;
-      break;
-    case "Ovas":
-      distance = planet.distances.Ovas;
-      break;
-    case "Craeva":
-      distance = planet.distances.Craeva;
-      break;
-    case "Antonia":
-      distance = planet.distances.Antonia;
-      break;
-    case "Faelvaen":
-      distance = planet.distances.Faelvaen;
-      break;
-    case "Gezz":
-      distance = planet.distances.Gezz;
-      break;
-    case "Ord":
-      distance = planet.distances.Ord;
-      break;
-    case "Divaran":
-      distance = planet.distances.Divaran;
-      break;
-    default:
-      distance = 0;
+  distance = planet.distances[planet2]
+  if (!distance) {
+    return 0;
   }
   return distance;
 }
@@ -170,6 +146,18 @@ if (Meteor.isClient) {
 //////
 
 Meteor.startup(function () {
+
+    $('.starfield').starfield({
+      starColor:  "rgba(255,255,255,1)",
+      bgColor:        "rgba(0,0,0,1)",
+      mouseColor: "rgba(0,0,0,0.2)",
+      fps:            15,
+      speed:      0.15,
+      quantity:   512,
+      ratio:      256,
+      class:      "starfield"
+    });
+
 
   // subscribe to all the players, the game i'm in, and all
   // the words in that game.
