@@ -1,0 +1,1 @@
+This project runs on meteor: www.meteor.com
