@@ -49,6 +49,7 @@ function createSoldier() {
                 health: rnd(100,150),
                 shield: 50,
                 accuracy: rnd(30,50),
+                action: "training",
                 owned: false}
 
   return newSoldier;
@@ -61,6 +62,12 @@ function populate() {
     Planets.update({_id: id},
                    {$push: {soldiers: newSoldier}, $inc: {soldierCount: 1}});    
   });
+}
+
+function soldierTraining() {
+  Soldiers.update({action: "training", owned: true},
+                  {$inc: {exp: 1}},
+                  {multi: true});
 }
 
 function getDistance(planet1, planet2) {
@@ -108,6 +115,22 @@ Meteor.methods({
                      {$pull: {soldiers: soldier_id}, $inc: {soldierCount: -1}});
     }
 
+  },
+  levelup: function(soldier_id) {
+    check(soldier_id, String);
+    soldier = Soldiers.findOne({_id: soldier_id});
+    if (!soldier) return
+    Soldiers.update({_id: soldier_id},
+                    {$inc: {level: 1}});
+  },
+  sendchat: function(message) {
+    check(message, String);
+    player = Users.findOne( {_id: this.userId} );
+    d = new Date();
+    time = d.getTime();
+    if (player) {
+      Chat.insert({name: player.username, message: message, time: time});
+    }
   }
 });
 
@@ -127,17 +150,21 @@ Meteor.setInterval(function () {
 Meteor.setInterval(function () {
 //increase fuel by 1 every 1 seconds
   Users.update({fuel: {$lt : 2000}},
-                {$inc: {fuel: 100}}, 
+                {$inc: {fuel: 50}},
                 {multi: true});
   Users.update({fuel: {$gt : 2000}},
                 {$set: {fuel: 2000}}, 
                 {multi: true});
   //generate soldiers
   populate();
-}, 1000);
+  //soldier actions, training / harvest etc
+  soldierTraining();
+}, 3000);
 
 //first start up intialize collections
 Meteor.startup(function () {
+  //do not want to persist chats at this point, keep db size down
+  Chat.remove({});
   populate();
   if (Planets.find().count() == 0) {
     Planets.insert({name: "Jute",

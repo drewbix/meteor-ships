@@ -24,7 +24,7 @@ if (Meteor.isClient) {
       Meteor.logout();
       evt.preventDefault();
     }
-  });  
+  });
 
   //
   // Planets Template
@@ -68,14 +68,6 @@ if (Meteor.isClient) {
       planet = player.planet
     }
     return planet;
-  }
-  Template.ship.soldierCount = function () {
-    count = 0;
-    player = Users.findOne({_id: Meteor.userId()});
-    if (player) {
-      count = player.soldierCount;
-    }
-    return count;    
   }
   Template.ship.fuelLevel = function () {
     fuel = 0;
@@ -138,6 +130,55 @@ if (Meteor.isClient) {
     }
     return mySoldiers;
   }
+  Template.mysoldiers.levelup = function() {
+    level = this.level;
+    exp = this.exp;
+    needed = exp2level[level];
+    if (exp > needed) {
+      return true;
+    }
+    return false;
+  }
+  Template.mysoldiers.next = function() {
+    level = this.level;
+    exp = this.exp;
+    needed = exp2level[level];
+    tonext = needed - exp;
+    if (tonext < 0) tonext = 0;
+    return tonext;
+  }
+  Template.mysoldiers.events({
+    'click .soldier': function(e) {
+      e.preventDefault();
+      level = this.level;
+      exp = this.exp;
+      needed = exp2level[level];
+      if (exp > needed) {
+        Meteor.call('levelup', this._id);
+      } else {
+        alert("not enough experience!");
+      }
+    }
+  });
+  //
+  // Chat template
+  //
+  Template.chat.chats = function() {
+    return Chat.find();
+  }
+  Template.chat.online = function() {
+    return Users.find().count();
+  }
+  //Template.chat.preserve(["#chatinput"]);
+  Template.chat.events({
+    'keyup #chatinput': function(e) {
+      if (e.keyCode == 13) {
+        message = $('#chatinput').val();
+        Meteor.call('sendchat', message);
+        $('#chatinput').val('');
+      }
+    }
+  });
 
 }
 
@@ -158,6 +199,7 @@ Meteor.startup(function () {
       class:      "starfield"
     });
 
+    setTimeout(function() {$('.chats').scrollTop(1000)}, 1000);
 
   // subscribe to all the players, the game i'm in, and all
   // the words in that game.
@@ -165,6 +207,7 @@ Meteor.startup(function () {
     Meteor.subscribe('userData');
     Meteor.subscribe('planets');
     Meteor.subscribe('soldiers');
+    Meteor.subscribe('chat');
 
   });
 
@@ -178,4 +221,3 @@ Meteor.startup(function () {
       Meteor.call('keepalive', Meteor.userId());
   }, 20*1000);
 });
-

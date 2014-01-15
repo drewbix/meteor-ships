@@ -1,64 +1,211 @@
-/* CSS declarations go here */
+/* animations */
+@-webkit-keyframes spinIn {
+	from { 
+       -webkit-transform: perspective(400) rotateY(90deg);
+       -webkit-transform-origin: 100% 100%;
+	}
+	to {
+       -webkit-transform: perspective(400) rotateY(0deg);
+       -webkit-transform-origin: 100% 100%;
+	}
+}
+@-webkit-keyframes spinOut {
+	from { 
+       -webkit-transform: perspective(400) rotateY(0deg);
+       -webkit-transform-origin: 100% 100%;
+	}
+	to { 
+       -webkit-transform: perspective(400) rotateY(90deg);
+       -webkit-transform-origin: 100% 100%;
+	}
+}
+
+/* general */
 * {
 	box-sizing: border-box;
 }
-html {
-	height:100%;
+html, body { 
+    overflow: hidden; 
+    padding: 0px; 
+    margin: 0px; 
+    width: 100%; 
+    height: 100%;
+    color:#F4F4F4;
+	font-family: 'Roboto', sans-serif;
+	font-size:15px;    
 }
-body {
-	background-color:#CCC;
+.starfield { 
+    width:400px;
+    height:300px;
+	position: absolute;
+	top:0;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
+h1,h2,h3 {
 	margin:0;
 	padding:0;
-	height:100%;
-	display:block;
 }
-h1 {
-	margin:0;
-	padding:0;
+ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+.clear {
+	clear: both;
 }
 #main {
-	padding:10px;
-	width:1000px;
-	margin:0 auto;
-	background-color:#FFF;
-	height:100%;
 	position:relative;
 }
 #account {
-	border:1px solid black;
+	border:1px solid #666;
 	margin:10px;
 	padding:5px;
 	position:absolute;
 	right:0;
 	top:0;
 }
+#chat {
+	position:fixed;
+	top:0;
+	left:320px;
+	width:400px;
+	background:#000;
+	color:#F4F4F4;
+	border: 1px solid red;
+
+}
+#chat span {
+	font-size: 11px;
+	color: #D4D4D4;
+}
+#chat p {
+	margin: 0;
+	padding: 2px;
+}
+#chat input {
+	width:350px;
+}
+.chats {
+	max-height:225px;
+	overflow-y: scroll;
+}
 .sidebar {
 	width:300px;
 	position:absolute;
-	right: 10px;
+	right: -5px;
 	top: 50px;	
+
+}
+.on {
+	opacity: 1.0;
+	transition-property: all;
+	transition-duration: 1s;
+	-webkit-animation-name: spinIn;
+    -webkit-animation-timing-function: ease-out;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-duration: 1s;
+    -webkit-transform-style: preserve-3d;
+}
+.off {
+	opacity: 0;
+	transition-property: all;
+	transition-duration: 1s;	
+	-webkit-animation-name: spinOut;
+    -webkit-animation-timing-function: ease-out;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-duration: 1s;
+    -webkit-transform-style: preserve-3d;
 }
 #ship,#mysoldiers {
-	border:1px solid black;
+	position:relative;
+	background-color: rgba(10,10,10,0.6);
+	border:1px solid rgba(0,246,10,0.9);
 	border-radius: 5px;
 	margin-bottom: 10px;
 	padding:10px;
 }
+#mysoldiers .soldier {
+	height:80px;
+}
+#mysoldiers .soldier:hover {
+	height:80px;
+	background-color:rgba(40,40,40,0.8);
+}
+#mysoldiers ul li {
+	padding:5px;
+}
 .progressbar {
-	width:200px;
+	width:190px;
 	height:25px;
-	border:1px solid #CCC;
+	border:1px solid #ab6f00;
+	float:left;
+}
+.progressText {
+	width: 80px;
+	float:left;
+	margin:0 0 0 5px;
 }
 .progress {
 	height:100%;
 	background-color: orange;
 
 }
-
-.soldier {
+#barracks .soldier {
+	background-color: rgba(10,10,10,0.8);
+	position: relative;
 	width:300px;
-	border:1px solid #ccc;
+	border:1px solid #666;
 	border-radius:5px;
 	margin:5px;
 	padding:5px;
+	font-size:13px;
+}
+#barracks p {
+	margin: 0;
+}
+.hireButton {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	margin: 0 5px 5px 0;
+}
+.button {
+	outline: none;
+	cursor: pointer;
+	text-align: center;
+	padding:0.5em 1em;
+	text-decoration:none;
+	text-shadow: 0 1px 1px rgba(0,0,0,.3);
+	-webkit-border-radius: .5em; 
+	-moz-border-radius: .5em;
+	border-radius: .5em;	
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+	box-shadow: 0 1px 2px rgba(0,0,0,.2);
+	color: #fef4e9;
+	border: solid 1px #da7c0c;
+	background: #f78d1d;
+	background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
+	background: -moz-linear-gradient(top,  #faa51a,  #f47a20);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');	
+}
+.button:hover {
+	background: #f47c20;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
+	background: -moz-linear-gradient(top,  #f88e11,  #f06015);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');	
+}
+.button:active {
+	color: #fcd3a5;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f47a20), to(#faa51a));
+	background: -moz-linear-gradient(top,  #f47a20,  #faa51a);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f47a20', endColorstr='#faa51a');	
+}
+.button:visited {
+	color:#f4f4f4;
+}
+a:visited {
+	color:#999;
 }

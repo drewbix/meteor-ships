@@ -1,12 +1,16 @@
 <head>
   <title>ships</title> 
+  <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
+
 <div id="main">
-	<h1>Ships Game</h1>
+
+	<h1>Ships Game!</h1>
 	{{> player}}
     {{#if currentUser}}
+      {{> chat}}
       {{> planets}}
       {{> barracks}}
       <div class="sidebar">
@@ -15,8 +19,8 @@
       </div>
     {{else}}
         <p>You must be logged in to play.</p>
-    {{/if}}		
-</div>  
+    {{/if}}
+</div>
 {{> starfield}}
 </body>
 
@@ -56,21 +60,24 @@
   <div class="progressbar">
   	<div class="progress" style="width:{{fuelPercent}}%">&nbsp;</div>
   </div>
-  <p>{{fuelLevel}} / 2000</p>
-  <p>You have {{soldierCount}} soldiers</p>
+  <p class="progressText">{{fuelLevel}} / 2000</p>
+  <br class="clear" />
 </div>
 </template>
 
 <template name="barracks">
-<div class="barracks">
+<div id="barracks">
 	<p>The follow soldiers are available for hire:</p>
 	{{#each soldiers}}
 		<div class="soldier">
-		Name: {{name}}<br />
-		Level: {{level}} | Exp: {{exp}}<br />
-		Health: {{health}} | Accuracy: {{accuracy}}<br />
-    <a href="" class="hireButton" id="{{_id}}"> HIRE <a>
+    <p class="soldierStats">
+  		Name: {{name}}<br />
+  		Level: {{level}} | Exp: {{exp}}<br />
+  		Health: {{health}} | Accuracy: {{accuracy}}<br />
+    </p>
+    <a href="" class="hireButton button" id="{{_id}}"> Hire <a>
 		</div>
+    
 	{{/each}}
 </div>
 </template>
@@ -79,9 +86,32 @@
 {{#if show}}
 <div id="mysoldiers">
   <h3>Your Soldiers</h3>
+  <ul>
   {{#each soldiers}}
-    <p>{{name}}</p>
+    <li class="soldier">
+      {{name}} - Level {{level}}, to next: {{next}}
+      {{#if levelup}}
+        <strong>!!</strong>
+      {{/if}}
+      <br />
+      {{exp}} experience
+      <br />
+      Action: {{action}}
+    </li>
   {{/each}}
+  </ul>
 </div>
 {{/if}}
+</template>
+
+<template name="chat">
+  <div id="chat">
+  <span>{{online}} users online</span>
+  <div class="chats">
+    {{#each chats}}
+      <p>{{name}}: {{message}}</p>
+    {{/each}}
+  </div>
+  <input type="text" id="chatinput" />
+  </div>
 </template>
