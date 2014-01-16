@@ -10,6 +10,7 @@
 	<h1>Ships Game!</h1>
 	{{> player}}
     {{#if currentUser}}
+      {{> controls}}
       {{> chat}}
       {{> planets}}
       {{> barracks}}
@@ -28,6 +29,12 @@
 {{#constant}}
   <div class="starfield"></div>
 {{/constant}}
+</template>
+
+<template name="controls">
+<div id="controls">
+  <a class="soldiertoggle button">Hide Soldiers</a>
+</div>
 </template>
 
 <template name="planets">

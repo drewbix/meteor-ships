@@ -7,6 +7,10 @@ function getDistance(planet1, planet2) {
   return distance;
 }
 
+function toggleSoldierView () {
+  Session.set("showSoldiers", false);
+}
+
 Accounts.ui.config({
   passwordSignupFields: 'USERNAME_ONLY'
 });
@@ -25,7 +29,15 @@ if (Meteor.isClient) {
       evt.preventDefault();
     }
   });
-
+  //
+  // Controls Template
+  //
+  Template.controls.events({
+    'click .soldiertoggle': function(e) {
+      TweenLite.set($('.sidebar'), {perspective:400});
+      TweenLite.to($('#mysoldiers'), 0.5, {rotationY:90, transformOrigin:"right top", onComplete:toggleSoldierView});
+    }
+  });
   //
   // Planets Template
   //
@@ -115,6 +127,7 @@ if (Meteor.isClient) {
   // Soldiers template
   //
   Template.mysoldiers.show = function() {
+    // return Session.get("showSoldiers");
     return true;
   }
   Template.mysoldiers.soldiers = function() {
@@ -169,7 +182,6 @@ if (Meteor.isClient) {
   Template.chat.online = function() {
     return Users.find().count();
   }
-  //Template.chat.preserve(["#chatinput"]);
   Template.chat.events({
     'keyup #chatinput': function(e) {
       if (e.keyCode == 13) {
@@ -188,6 +200,9 @@ if (Meteor.isClient) {
 
 Meteor.startup(function () {
 
+    TweenLite.set($('.sidebar'), {perspective:400});
+    Session.set("showSoldiers", true);
+
     $('.starfield').starfield({
       starColor:  "rgba(255,255,255,1)",
       bgColor:        "rgba(0,0,0,1)",
@@ -198,8 +213,6 @@ Meteor.startup(function () {
       ratio:      256,
       class:      "starfield"
     });
-
-    setTimeout(function() {$('.chats').scrollTop(1000)}, 1000);
 
   // subscribe to all the players, the game i'm in, and all
   // the words in that game.
