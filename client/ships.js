@@ -62,7 +62,7 @@ if (Meteor.isClient) {
         currentPlanet = Planets.findOne({name: player.planet});
         distance = getDistance(currentPlanet.name, newplanet);
         if (player.fuel >= distance) {
-          Meteor.call('travel', Meteor.userId(), newplanet);
+          Meteor.call('travel', newplanet);
         } else {
           alert("You must wait for your ships fuel to recharge");
         }
@@ -120,7 +120,7 @@ if (Meteor.isClient) {
     'click .hireButton': function(evt) {
       evt.preventDefault();
       //alert(this._id);
-      Meteor.call('hire', Meteor.userId(), this._id);
+      Meteor.call('hire', this._id);
     }
   });
   //

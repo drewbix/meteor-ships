@@ -86,22 +86,20 @@ Meteor.methods({
                  {$set: {last_keepalive: (new Date()).getTime(),
                          idle: false}});
   },
-  travel: function(player_id, newPlanet) {
-    check(player_id, String);
+  travel: function(newPlanet) {
     check(newPlanet, String);
-    player = Users.findOne( {_id: player_id} );
+    player = Users.findOne( {_id: this.userId} );
     currentPlanet = player.planet;
     distance = getDistance(currentPlanet, newPlanet);
     if (player.fuel >= distance) {
-      Users.update({_id: player_id},
+      Users.update({_id: this.userId},
                    {$set: {planet: newPlanet}, $inc: {fuel: -(distance)}});
     }  
   },
-  hire: function(player_id, soldier_id) {
-    check(player_id, String);
+  hire: function(soldier_id) {
     check(soldier_id, String);
     soldier = Soldiers.findOne({_id: soldier_id});
-    player = Users.findOne({_id: player_id});
+    player = Users.findOne({_id: this.userId});
     planet = Planets.findOne({name: player.planet});
     if (!soldier || soldier.owned == true) {
       return
@@ -109,7 +107,7 @@ Meteor.methods({
     if (player.soldierCount < 5) {
       Soldiers.update({_id: soldier_id},
                      {$set: {owned: true}});
-      Users.update({_id: player_id},
+      Users.update({_id: this.userId},
                      {$push: {soldiers: soldier_id}, $inc: {soldierCount: 1}});
       Planets.update({_id: planet._id}, 
                      {$pull: {soldiers: soldier_id}, $inc: {soldierCount: -1}});
