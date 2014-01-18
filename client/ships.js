@@ -1,6 +1,6 @@
 function getDistance(planet1, planet2) {
-  planet = Planets.findOne({name: planet1});
-  distance = planet.distances[planet2]
+  var planet = Planets.findOne({name: planet1});
+  var distance = planet.distances[planet2];
   if (!distance) {
     return 0;
   }
@@ -8,7 +8,7 @@ function getDistance(planet1, planet2) {
 }
 
 function toggleSoldierView () {
-  Session.set("showSoldiers", false);
+  Session.set('showSoldiers', false);
 }
 
 Accounts.ui.config({
@@ -21,7 +21,7 @@ if (Meteor.isClient) {
   //
   Template.player.username = function () {
     return Meteor.user().username;
-  }
+  };
 
   Template.player.events({
     'click a#logoutButton': function (evt) {
@@ -35,7 +35,7 @@ if (Meteor.isClient) {
   Template.controls.events({
     'click .soldiertoggle': function(e) {
       TweenLite.set($('.sidebar'), {perspective:400});
-      TweenLite.to($('#mysoldiers'), 0.5, {rotationY:90, transformOrigin:"right top", onComplete:toggleSoldierView});
+      TweenLite.to($('#mysoldiers'), 0.5, {rotationY:90, transformOrigin:'right top', onComplete:toggleSoldierView});
     }
   });
   //
@@ -43,28 +43,22 @@ if (Meteor.isClient) {
   //
   Template.planets.show = function () {
     return true;
-  }  
+  };
 
   Template.planets.planets = function () {
     return Planets.find();
-  }
-  Template.planets.distance = function () {
-    player = Users.findOne( {_id: Meteor.userId()} );
-    currentPlanet = Planets.findOne({name: player.planet});
-    distance = 0;
-    return distance;
-  }
+  };
   Template.planets.events({
     'change #planetSelect': function (evt) {
-      var newplanet = $('#planetSelect').val()
-      if (newplanet != '') {
-        player = Users.findOne( {_id: Meteor.userId()} );
-        currentPlanet = Planets.findOne({name: player.planet});
-        distance = getDistance(currentPlanet.name, newplanet);
+      var newplanet = $('#planetSelect').val();
+      if (newplanet !== '') {
+        var player = Users.findOne( {_id: Meteor.userId()} );
+        var currentPlanet = Planets.findOne({name: player.planet});
+        var distance = getDistance(currentPlanet.name, newplanet);
         if (player.fuel >= distance) {
           Meteor.call('travel', newplanet);
         } else {
-          alert("You must wait for your ships fuel to recharge");
+          alert('You must wait for your ships fuel to recharge');
         }
       }
     }
@@ -74,48 +68,48 @@ if (Meteor.isClient) {
   // Ship Template
   //
   Template.ship.planet = function () {
-    planet = '';
+    var planet = '';
     var player = Users.findOne({_id: Meteor.userId()});
-    if (player != null) {
-      planet = player.planet
+    if (player !== null) {
+      planet = player.planet;
     }
     return planet;
-  }
+  };
   Template.ship.fuelLevel = function () {
-    fuel = 0;
-    player = Users.findOne({_id: Meteor.userId()});
+    var fuel = 0;
+    var player = Users.findOne({_id: Meteor.userId()});
     if (player) {
       fuel = player.fuel;
     }
     return fuel;
-  }
+  };
   Template.ship.fuelPercent = function () {
-    fuel = 0;
-    player = Users.findOne({_id: Meteor.userId()});
+    var fuel = 0;
+    var player = Users.findOne({_id: Meteor.userId()});
     if (player) {
       fuel = player.fuel;
     }
-    fuelPercent = (fuel / 2000) * 100;
+    var fuelPercent = (fuel / 2000) * 100;
     return fuelPercent;
-  }
+  };
   //
   // Barracks template
   //
   Template.barracks.soldiers = function() {
-    soldiersHere = [];
-    user = Users.findOne({_id: Meteor.userId()});
-    if (user != null && user != undefined) {
-      currentPlanet = user.planet;
-      planet = Planets.findOne({name: currentPlanet});
-      if (planet != null && planet != undefined) {
-        freeSoldiers = planet.soldiers;
+    var soldiersHere = [];
+    var user = Users.findOne({_id: Meteor.userId()});
+    if (user !== null && user !== undefined) {
+      var currentPlanet = user.planet;
+      var planet = Planets.findOne({name: currentPlanet});
+      if (planet !== null && planet !== undefined) {
+        var freeSoldiers = planet.soldiers;
         for (i = 0; i < freeSoldiers.length; i++) {
           soldiersHere.push(Soldiers.findOne({_id: freeSoldiers[i]}));
-        }         
-      }     
+        }
+      }
     }
     return soldiersHere;
-  }
+  };
   Template.barracks.events({
     'click .hireButton': function(evt) {
       evt.preventDefault();
@@ -127,49 +121,49 @@ if (Meteor.isClient) {
   // Soldiers template
   //
   Template.mysoldiers.show = function() {
-    // return Session.get("showSoldiers");
+    // return Session.get('showSoldiers');
     return true;
-  }
+  };
   Template.mysoldiers.soldiers = function() {
-    mySoldiers = [];
-    user = Users.findOne({_id: Meteor.userId()});
-    if (user != null && user != undefined) {
-      allSoldiers = user.soldiers;
-      if (allSoldiers != null && allSoldiers != undefined) {
-        for (i = 0; i < allSoldiers.length; i++) {
+    var mySoldiers = [];
+    var user = Users.findOne({_id: Meteor.userId()});
+    if (user !== null && user !== undefined) {
+      var allSoldiers = user.soldiers;
+      if (allSoldiers !== null && allSoldiers !== undefined) {
+        for (var i = 0; i < allSoldiers.length; i++) {
           mySoldiers.push(Soldiers.findOne({_id: allSoldiers[i]}));
         }
       }
     }
     return mySoldiers;
-  }
+  };
   Template.mysoldiers.levelup = function() {
-    level = this.level;
-    exp = this.exp;
-    needed = exp2level[level];
+    var level = this.level;
+    var exp = this.exp;
+    var needed = exp2level[level];
     if (exp > needed) {
       return true;
     }
     return false;
-  }
+  };
   Template.mysoldiers.next = function() {
-    level = this.level;
-    exp = this.exp;
-    needed = exp2level[level];
-    tonext = needed - exp;
+    var level = this.level;
+    var exp = this.exp;
+    var needed = exp2level[level];
+    var tonext = needed - exp;
     if (tonext < 0) tonext = 0;
     return tonext;
-  }
+  };
   Template.mysoldiers.events({
     'click .soldier': function(e) {
       e.preventDefault();
-      level = this.level;
-      exp = this.exp;
-      needed = exp2level[level];
+      var level = this.level;
+      var exp = this.exp;
+      var needed = exp2level[level];
       if (exp > needed) {
         Meteor.call('levelup', this._id);
       } else {
-        alert("not enough experience!");
+        alert('not enough experience!');
       }
     }
   });
@@ -178,14 +172,14 @@ if (Meteor.isClient) {
   //
   Template.chat.chats = function() {
     return Chat.find();
-  }
+  };
   Template.chat.online = function() {
     return Users.find().count();
-  }
+  };
   Template.chat.events({
     'keyup #chatinput': function(e) {
       if (e.keyCode == 13) {
-        message = $('#chatinput').val();
+        var message = $('#chatinput').val();
         Meteor.call('sendchat', message);
         $('#chatinput').val('');
       }
@@ -201,17 +195,17 @@ if (Meteor.isClient) {
 Meteor.startup(function () {
 
     TweenLite.set($('.sidebar'), {perspective:400});
-    Session.set("showSoldiers", true);
+    Session.set('showSoldiers', true);
 
     $('.starfield').starfield({
-      starColor:  "rgba(255,255,255,1)",
-      bgColor:        "rgba(0,0,0,1)",
-      mouseColor: "rgba(0,0,0,0.2)",
+      starColor:  'rgba(255,255,255,1)',
+      bgColor:        'rgba(0,0,0,1)',
+      mouseColor: 'rgba(0,0,0,0.2)',
       fps:            15,
       speed:      0.15,
       quantity:   512,
       ratio:      256,
-      class:      "starfield"
+      class:      'starfield'
     });
 
   // subscribe to all the players, the game i'm in, and all
