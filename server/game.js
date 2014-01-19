@@ -118,9 +118,14 @@ Meteor.methods({
     check(soldier_id, String);
     soldier = Soldiers.findOne({_id: soldier_id});
     if (!soldier) return
+    var level = soldier.level;
+    var exp = soldier.exp;
+    var needed = exp2level[level];
+    if (exp >= needed) {
     var addhealth = rnd(8,12) + Math.floor(soldier.level / 2);
     Soldiers.update({_id: soldier_id},
                     {$inc: {level: 1, health: addhealth}});
+    }
   },
   sendchat: function(message) {
     check(message, String);

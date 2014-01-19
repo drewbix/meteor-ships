@@ -160,7 +160,7 @@ if (Meteor.isClient) {
       var level = this.level;
       var exp = this.exp;
       var needed = exp2level[level];
-      if (exp > needed) {
+      if (exp >= needed) {
         Meteor.call('levelup', this._id);
       } else {
         alert('not enough experience!');
