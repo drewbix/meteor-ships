@@ -50,13 +50,14 @@ ul {
 }
 #chat {
 	position:fixed;
-	top:0;
-	left:320px;
-	width:400px;
+	bottom:0;
+	width:100%;
 	background:#000;
 	color:#F4F4F4;
-	border: 1px solid red;
-
+	border-top: 1px solid red;
+	height:300px;
+	z-index: 99;
+	padding:15px;
 }
 #chat span {
 	font-size: 11px;
@@ -70,6 +71,7 @@ ul {
 	width:350px;
 }
 .chats {
+	height:225px;
 	max-height:225px;
 	overflow-y: scroll;
 }

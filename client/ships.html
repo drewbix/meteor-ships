@@ -112,6 +112,7 @@
 </template>
 
 <template name="chat">
+  {{#if show}}
   <div id="chat">
   <span>{{online}} users online</span>
   <div class="chats">
@@ -121,4 +122,5 @@
   </div>
   <input type="text" id="chatinput" />
   </div>
+  {{/if}}
 </template>

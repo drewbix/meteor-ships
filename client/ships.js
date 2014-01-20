@@ -11,6 +11,11 @@ function toggleSoldierView () {
   Session.set('showSoldiers', false);
 }
 
+function toggleConsole() {
+  var current = Session.get('showConsole');
+  Session.set('showConsole', !current);
+}
+
 Accounts.ui.config({
   passwordSignupFields: 'USERNAME_ONLY'
 });
@@ -170,6 +175,9 @@ if (Meteor.isClient) {
   //
   // Chat template
   //
+  Template.chat.show = function() {
+    return Session.get('showConsole');
+  }
   Template.chat.chats = function() {
     return Chat.find();
   };
@@ -194,8 +202,17 @@ if (Meteor.isClient) {
 
 Meteor.startup(function () {
 
+    $(function() {
+      $(document).on('keyup', function(e) { 
+        if(e.which == 192) {
+          toggleConsole();
+        }
+      });
+    });
+
     TweenLite.set($('.sidebar'), {perspective:400});
     Session.set('showSoldiers', true);
+    Session.set('showConsole', true);
 
     $('.starfield').starfield({
       starColor:  'rgba(255,255,255,1)',
