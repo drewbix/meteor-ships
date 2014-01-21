@@ -12,7 +12,7 @@ if (Meteor.isServer) {
   // publish all the non-idle players.
   Meteor.publish('userData', function () {
     return Users.find({idle: false},
-        {fields: {'fuel': 1, 'planet': 1, 'soldierCount': 1, 'soldiers': 1}});
+        {fields: {'last_keepalive': 1,'idle': 1, 'username': 1, 'fuel': 1, 'planet': 1, 'soldierCount': 1, 'soldiers': 1}});
   });
   Meteor.publish('planets', function() {
     return Planets.find();
