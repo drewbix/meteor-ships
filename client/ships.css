@@ -91,6 +91,7 @@ ul {
 }
 #mysoldiers .soldier {
 	height:80px;
+	cursor: pointer;
 }
 #mysoldiers .soldier:hover {
 	height:80px;
@@ -98,6 +99,23 @@ ul {
 }
 #mysoldiers ul li {
 	padding:5px;
+}
+#soldierview {
+	width:400px;
+	height:300px;
+	position:fixed;
+	top:50%;
+	left:50%;
+	margin-top:-150px;
+	margin-left:-200px;
+	border:1px solid red;
+	background-color:rgba(0,0,0,0.5);
+	padding:15px;
+}
+.soldierlevel {
+	position: absolute;
+	top: 15px;
+	right: 15px;
 }
 .progressbar {
 	width:190px;

@@ -162,14 +162,7 @@ if (Meteor.isClient) {
   Template.mysoldiers.events({
     'click .soldier': function(e) {
       e.preventDefault();
-      var level = this.level;
-      var exp = this.exp;
-      var needed = exp2level[level];
-      if (exp >= needed) {
-        Meteor.call('levelup', this._id);
-      } else {
-        alert('not enough experience!');
-      }
+      Session.set('soldierView', this._id);
     }
   });
   //
@@ -177,7 +170,7 @@ if (Meteor.isClient) {
   //
   Template.chat.show = function() {
     return Session.get('showConsole');
-  }
+  };
   Template.chat.chats = function() {
     return Chat.find();
   };
@@ -193,6 +186,33 @@ if (Meteor.isClient) {
       }
     }
   });
+  //
+  // Soldierview Template
+  //
+  Template.soldierview.show = function() {
+    var selected = Session.get('soldierView');
+    return (selected != undefined);
+  };
+  Template.soldierview.soldier = function() {
+    var soldierid = Session.get('soldierView');
+    if (soldierid != undefined) {
+      return Soldiers.findOne({_id: soldierid});
+    }
+  };
+  Template.soldierview.events({
+    'click .levelup': function() {
+      var soldierid = Session.get('soldierView');
+      var soldier = Soldiers.findOne({_id: soldierid});
+      var level = soldier.level;
+      var exp = soldier.exp;
+      var needed = exp2level[level];
+      if (exp >= needed) {
+        Meteor.call('levelup', soldier._id);
+      } else {
+        alert('not enough experience!');
+      }
+    }
+  })
 
 }
 

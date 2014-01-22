@@ -14,6 +14,7 @@
       {{> chat}}
       {{> planets}}
       {{> barracks}}
+      {{> soldierview}}
       <div class="sidebar">
         {{> ship}}
         {{> mysoldiers}}
@@ -122,5 +123,22 @@
   </div>
   <input type="text" id="chatinput" />
   </div>
+  {{/if}}
+</template>
+
+<template name="soldierview">
+  {{#if show}}
+    <div id="soldierview">
+      <h2>{{soldier.name}}</h2>
+      <div class="soldierlevel">
+        Level {{soldier.level}}
+      </div>
+      <h3>Stats</h3>
+      <ul>
+        <li>Health: {{soldier.health}}</li>
+        <li>Accuracy: {{soldier.accuracy}}</li>
+      </ul>
+      <span class="levelup button"> Level Up </span>
+    </div>
   {{/if}}
 </template>
