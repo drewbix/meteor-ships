@@ -199,6 +199,21 @@ if (Meteor.isClient) {
       return Soldiers.findOne({_id: soldierid});
     }
   };
+  Template.soldierview.tonext = function() {
+    var soldierid = Session.get('soldierView');
+    soldier = Soldiers.findOne({_id: soldierid});
+    var level = soldier.level;
+    var exp = soldier.exp;
+    var needed = exp2level[level];
+    var tonext = needed - exp;
+    if (tonext < 0) tonext = 0;
+    return tonext;
+  };
+  Template.soldierview.hascp = function() {
+    var soldierid = Session.get('soldierView');
+    soldier = Soldiers.findOne({_id: soldierid});
+    return (soldier.cp > 0);
+  }
   Template.soldierview.events({
     'click .levelup': function() {
       var soldierid = Session.get('soldierView');
@@ -211,6 +226,18 @@ if (Meteor.isClient) {
       } else {
         alert('not enough experience!');
       }
+    },
+    'click .addaim': function() {
+      Meteor.call('addstat', soldier._id, 'aim');
+    },
+    'click .addagility': function() {
+      Meteor.call('addstat', soldier._id, 'agility');
+    },
+    'click .addhealth': function() {
+      Meteor.call('addstat', soldier._id, 'health');
+    },
+    'click .addwisdom': function() {
+      Meteor.call('addstat', soldier._id, 'wisdom');
     }
   })
 

@@ -80,14 +80,32 @@
 		<div class="soldier">
     <p class="soldierStats">
   		Name: {{name}}<br />
-  		Level: {{level}} | Exp: {{exp}}<br />
-  		Health: {{health}} | Accuracy: {{accuracy}}<br />
+  		Level: {{level}}<br />
+      Exp: {{exp}}<br />
+      Aim: {{aim}}<br />
+      Agility: {{agility}}<br />
+      Health: {{health}}<br />
+      Wisdom: {{wisdom}}<br />
     </p>
     <a href="" class="hireButton button" id="{{_id}}"> Hire <a>
 		</div>
     
 	{{/each}}
 </div>
+</template>
+
+<template name="chat">
+  {{#if show}}
+  <div id="chat">
+  <span>{{online}} users online</span>
+  <div class="chats">
+    {{#each chats}}
+      <p>{{name}}: {{message}}</p>
+    {{/each}}
+  </div>
+  <input type="text" id="chatinput" />
+  </div>
+  {{/if}}
 </template>
 
 <template name="mysoldiers">
@@ -112,20 +130,6 @@
 {{/if}}
 </template>
 
-<template name="chat">
-  {{#if show}}
-  <div id="chat">
-  <span>{{online}} users online</span>
-  <div class="chats">
-    {{#each chats}}
-      <p>{{name}}: {{message}}</p>
-    {{/each}}
-  </div>
-  <input type="text" id="chatinput" />
-  </div>
-  {{/if}}
-</template>
-
 <template name="soldierview">
   {{#if show}}
     <div id="soldierview">
@@ -133,11 +137,42 @@
       <div class="soldierlevel">
         Level {{soldier.level}}
       </div>
+      <div class="soldierhp">
+        <p>Hitpoints: {{soldier.hp}} / {{soldier.maxhp}}</p>
+      </div>
+      <div class="soldierexp">
+      Exp: {{soldier.exp}}
+      <br />
+      To Next: {{tonext}}
+      </div>
       <h3>Stats</h3>
       <ul>
-        <li>Health: {{soldier.health}}</li>
-        <li>Accuracy: {{soldier.accuracy}}</li>
+        <li>
+          Aim: {{soldier.aim}}
+          {{#if hascp}}
+            <a class="addaim" href="#">+</a>
+          {{/if}}
+        </li>
+        <li>
+          Agility: {{soldier.agility}}
+          {{#if hascp}}
+            <a class="addagility" href="#">+</a>
+          {{/if}}
+        </li>
+        <li>
+          Health: {{soldier.health}}
+          {{#if hascp}}
+            <a class="addhealth" href="#">+</a>
+          {{/if}}
+        </li>
+        <li>
+          Wisdom: {{soldier.wisdom}}
+          {{#if hascp}}
+            <a class="addwisdom" href="#">+</a>
+          {{/if}}
+        </li>
       </ul>
+      <p>Character Points: {{soldier.cp}}</p>
       <span class="levelup button"> Level Up </span>
     </div>
   {{/if}}

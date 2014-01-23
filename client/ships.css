@@ -12,6 +12,14 @@ html, body {
 	font-family: 'Roboto', sans-serif;
 	font-size:15px;    
 }
+a,a:visited,a:active {
+  color:rgba(0,246,10,0.9);
+  text-decoration:none;
+  font-weight: bold;
+}
+a:hover {
+  text-shadow:0 0 1px rgba(255,255,255,0.85);
+}
 .starfield { 
     width:400px;
     height:300px;
@@ -112,6 +120,11 @@ ul {
 	background-color:rgba(0,0,0,0.5);
 	padding:15px;
 }
+.levelup {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+}
 .soldierlevel {
 	position: absolute;
 	top: 15px;
@@ -134,14 +147,23 @@ ul {
 
 }
 #barracks .soldier {
+	transition: all 0.5s ease;
 	background-color: rgba(10,10,10,0.8);
 	position: relative;
 	width:300px;
+	height:70px;
+	max-height:70px;
 	border:1px solid #666;
 	border-radius:5px;
 	margin:5px;
 	padding:5px;
 	font-size:13px;
+	overflow:hidden;
+}
+#barracks .soldier:hover {
+	height:150px;
+	max-height:150px;
+	border:1px solid rgba(0,246,10,0.9);
 }
 #barracks p {
 	margin: 0;
@@ -186,7 +208,4 @@ ul {
 }
 .button:visited {
 	color:#f4f4f4;
-}
-a:visited {
-	color:#999;
 }

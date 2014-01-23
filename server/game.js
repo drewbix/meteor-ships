@@ -46,9 +46,14 @@ function createSoldier() {
   newSoldier = {name: generateName(),
                 level: 1,
                 exp: rnd(0,500),
-                health: rnd(100,150),
-                shield: 50,
-                accuracy: rnd(30,50),
+                cp: rnd(9,18),
+                maxhp: rnd(100,150),
+                hp: 0,
+                shield: 0,
+                aim: rnd(18,35),
+                agility: rnd(18,35),
+                health: rnd(18,35),
+                wisdom: rnd(18,35),
                 action: "training",
                 owned: false}
 
@@ -114,6 +119,31 @@ Meteor.methods({
     }
 
   },
+  addstat: function(soldier_id, stat) {
+    check(soldier_id, String);
+    check(stat, String);
+    soldier = Soldiers.findOne({_id: soldier_id});
+    if (!soldier || soldier.cp <= 0) return
+    switch(stat) {
+      case "aim":
+        Soldiers.update({_id: soldier._id},
+                        {$inc: {cp: -1, aim: 1}});
+        break;
+      case "agility":
+        Soldiers.update({_id: soldier._id},
+                        {$inc: {cp: -1, agility: 1}});
+        break;
+      case "health":
+        Soldiers.update({_id: soldier._id},
+                        {$inc: {cp: -1, health: 1}});
+        break;
+      case "wisdom":
+        Soldiers.update({_id: soldier._id},
+                        {$inc: {cp: -1, wisdom: 1}});
+        break;
+    }
+
+  },
   levelup: function(soldier_id) {
     check(soldier_id, String);
     soldier = Soldiers.findOne({_id: soldier_id});
@@ -122,9 +152,10 @@ Meteor.methods({
     var exp = soldier.exp;
     var needed = exp2level[level];
     if (exp >= needed) {
-    var addhealth = rnd(8,12) + Math.floor(soldier.level / 2);
+      var addhp = rnd(8,12) + Math.floor(soldier.level / 2);
+      var newhp = soldier.maxhp + addhp;
     Soldiers.update({_id: soldier_id},
-                    {$inc: {level: 1, health: addhealth}});
+                      {$inc: {level: 1, maxhp: addhp, cp: 3}, $set: {hp: newhp}});
     }
   },
   sendchat: function(message) {
