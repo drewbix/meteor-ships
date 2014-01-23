@@ -71,7 +71,7 @@ function populate() {
 
 function soldierTraining() {
   Soldiers.update({action: "training", owned: true},
-                  {$inc: {exp: 1}},
+                  {$inc: {exp: 33}},
                   {multi: true});
 }
 
@@ -184,17 +184,17 @@ Meteor.setInterval(function () {
 
 Meteor.setInterval(function () {
 //increase fuel by 1 every 1 seconds
-  Users.update({fuel: {$lt : 2000}},
-                {$inc: {fuel: 50}},
-                {multi: true});
-  Users.update({fuel: {$gt : 2000}},
-                {$set: {fuel: 2000}}, 
-                {multi: true});
+  // Users.update({fuel: {$lt : 2000}},
+  //               {$inc: {fuel: 50}},
+  //               {multi: true});
+  // Users.update({fuel: {$gt : 2000}},
+  //               {$set: {fuel: 2000}},
+  //               {multi: true});
   //generate soldiers
   populate();
   //soldier actions, training / harvest etc
   soldierTraining();
-}, 3000);
+}, 19*1000);
 
 //first start up intialize collections
 Meteor.startup(function () {
