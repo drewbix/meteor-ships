@@ -228,7 +228,7 @@ if (Meteor.isClient) {
       }
     },
     'click .addconcentration': function() {
-      Meteor.call('addconcentration', soldier._id, 'concentration');
+      Meteor.call('addstat', soldier._id, 'concentration');
     },
     'click .addagility': function() {
       Meteor.call('addstat', soldier._id, 'agility');
