@@ -50,7 +50,7 @@ function createSoldier() {
                 maxhp: rnd(100,150),
                 hp: 0,
                 shield: 0,
-                aim: rnd(18,35),
+                concentration: rnd(18,35),
                 agility: rnd(18,35),
                 health: rnd(18,35),
                 wisdom: rnd(18,35),
@@ -125,9 +125,9 @@ Meteor.methods({
     soldier = Soldiers.findOne({_id: soldier_id});
     if (!soldier || soldier.cp <= 0) return
     switch(stat) {
-      case "aim":
+      case "concentration":
         Soldiers.update({_id: soldier._id},
-                        {$inc: {cp: -1, aim: 1}});
+                        {$inc: {cp: -1, concentration: 1}});
         break;
       case "agility":
         Soldiers.update({_id: soldier._id},

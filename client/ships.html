@@ -82,8 +82,8 @@
   		Name: {{name}}<br />
   		Level: {{level}}<br />
       Exp: {{exp}}<br />
-      Aim: {{aim}}<br />
       Agility: {{agility}}<br />
+      Concentration: {{concentration}}<br />
       Health: {{health}}<br />
       Wisdom: {{wisdom}}<br />
     </p>
@@ -148,17 +148,17 @@
       <h3>Stats</h3>
       <ul>
         <li>
-          Aim: {{soldier.aim}}
-          {{#if hascp}}
-            <a class="addaim" href="#">+</a>
-          {{/if}}
-        </li>
-        <li>
           Agility: {{soldier.agility}}
           {{#if hascp}}
             <a class="addagility" href="#">+</a>
           {{/if}}
         </li>
+        <li>
+          Concentration: {{soldier.concentration}}
+          {{#if hascp}}
+            <a class="addconcentration" href="#">+</a>
+          {{/if}}
+        </li>        
         <li>
           Health: {{soldier.health}}
           {{#if hascp}}

@@ -227,8 +227,8 @@ if (Meteor.isClient) {
         alert('not enough experience!');
       }
     },
-    'click .addaim': function() {
-      Meteor.call('addstat', soldier._id, 'aim');
+    'click .addconcentration': function() {
+      Meteor.call('addconcentration', soldier._id, 'concentration');
     },
     'click .addagility': function() {
       Meteor.call('addstat', soldier._id, 'agility');
