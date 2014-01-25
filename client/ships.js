@@ -115,6 +115,19 @@ if (Meteor.isClient) {
     }
     return soldiersHere;
   };
+  Template.barracks.rating = function() {
+    //formulate derived from the line formed by the points 2,24 and 10,77
+    //y = mx + b;
+    var x = (43/4);
+    var y = (53/8);
+    var stat1 = this.agility;
+    var stat2 = this.concentration;
+    var stat3 = this.health;
+    var stat4 = this.wisdom + this.cp;
+    var avg = (stat1+stat2+stat3+stat4)/4;
+    var result = Math.round( ((avg-x)/y)*10 ) / 10;
+    return result;
+  }
   Template.barracks.events({
     'click .hireButton': function(evt) {
       evt.preventDefault();
@@ -209,6 +222,19 @@ if (Meteor.isClient) {
     if (tonext < 0) tonext = 0;
     return tonext;
   };
+  Template.soldierview.rating = function() {
+    var soldierid = Session.get('soldierView');
+    soldier = Soldiers.findOne({_id: soldierid});
+    var x = (43/4);
+    var y = (53/8);
+    var stat1 = soldier.agility;
+    var stat2 = soldier.concentration;
+    var stat3 = soldier.health;
+    var stat4 = soldier.wisdom;
+    var avg = (stat1+stat2+stat3+stat4)/4;
+    var result = Math.round( ((avg-x)/y)*10 ) / 10;
+    return result;
+  }
   Template.soldierview.hascp = function() {
     var soldierid = Session.get('soldierView');
     soldier = Soldiers.findOne({_id: soldierid});

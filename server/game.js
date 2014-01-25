@@ -155,7 +155,7 @@ Meteor.methods({
       var addhp = rnd(8,12) + Math.floor(soldier.level / 2);
       var newhp = soldier.maxhp + addhp;
     Soldiers.update({_id: soldier_id},
-                      {$inc: {level: 1, maxhp: addhp, cp: 3}, $set: {hp: newhp}});
+                      {$inc: {level: 1, maxhp: addhp, cp: 5}, $set: {hp: newhp}});
     }
   },
   sendchat: function(message) {
