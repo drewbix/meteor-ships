@@ -33,9 +33,11 @@
 </template>
 
 <template name="controls">
+{{#if show}}
 <div id="controls">
   <a class="soldiertoggle button">Hide Soldiers</a>
 </div>
+{{/if}}
 </template>
 
 <template name="planets">
@@ -63,12 +65,34 @@
 
 <template name="ship">
 <div id="ship">
-  <p>You are on planet {{planet}}.</p>
+  <h3>Resources</h3>
+  <div class="resources">
+      <div class="resource">
+        <img src="/images/rRed.png" />
+        <p>{{player.rRed}}</p>
+      </div>
+      <div class="resource">
+        <img src="/images/rBlue.png" />
+        <p>{{player.rBlue}}</p>
+      </div>
+      <div class="resource">
+        <img src="/images/rGreen.png" />
+        <p>{{player.rGreen}}</p>
+      </div>
+      <div class="resource">
+        <img src="/images/rWhite.png" />
+        <p>{{player.rWhite}}</p>
+      </div>
+      <div class="resource">
+        <img src="/images/rBlack.png" />
+        <p>{{player.rBlack}}</p>
+      </div>
+  </div>
   <h3>Fuel</h3>
   <div class="progressbar">
   	<div class="progress" style="width:{{fuelPercent}}%">&nbsp;</div>
   </div>
-  <p class="progressText">{{fuelLevel}} / 2000</p>
+  <p class="progressText">{{player.fuel}} / 2000</p>
   <br class="clear" />
 </div>
 </template>
@@ -104,6 +128,10 @@
     {{/each}}
   </div>
   <input type="text" id="chatinput" />
+  </div>
+  {{else}}
+  <div id="chatSmall">
+    <p>Press ~ to expand console</p>
   </div>
   {{/if}}
 </template>

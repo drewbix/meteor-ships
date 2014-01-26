@@ -76,9 +76,32 @@ function populate() {
 }
 
 function soldierTraining() {
-  Soldiers.update({action: "training", owned: true},
-                  {$inc: {exp: 33}},
-                  {multi: true});
+  Soldiers.find({action: "training", owned: true}).forEach(function(soldier) {
+    var addexp = soldier.wisdom;
+    Soldiers.update({_id: soldier._id},
+                    {$inc: {exp: addexp}});
+  });
+}
+
+function addStat(soldier_id, stat) {
+  switch(stat) {
+    case "concentration":
+      Soldiers.update({_id: soldier_id},
+                      {$inc: {concentration: 1}});
+      break;
+    case "agility":
+      Soldiers.update({_id: soldier_id},
+                      {$inc: {agility: 1}});
+      break;
+    case "health":
+      Soldiers.update({_id: soldier_id},
+                      {$inc: {health: 1}});
+      break;
+    case "wisdom":
+      Soldiers.update({_id: soldier_id},
+                      {$inc: {wisdom: 1}});
+      break;
+  }
 }
 
 function getDistance(planet1, planet2) {
@@ -132,30 +155,14 @@ Meteor.methods({
     Soldiers.update({_id: soldier_id},
                     {$set: {action: newaction}});
   },
-  addstat: function(soldier_id, stat) {
+  usecp: function(soldier_id, stat) {
     check(soldier_id, String);
     check(stat, String);
     soldier = Soldiers.findOne({_id: soldier_id});
     if (!soldier || soldier.cp <= 0) return
-    switch(stat) {
-      case "concentration":
-        Soldiers.update({_id: soldier._id},
-                        {$inc: {cp: -1, concentration: 1}});
-        break;
-      case "agility":
-        Soldiers.update({_id: soldier._id},
-                        {$inc: {cp: -1, agility: 1}});
-        break;
-      case "health":
-        Soldiers.update({_id: soldier._id},
-                        {$inc: {cp: -1, health: 1}});
-        break;
-      case "wisdom":
-        Soldiers.update({_id: soldier._id},
-                        {$inc: {cp: -1, wisdom: 1}});
-        break;
-    }
-
+    addStat(soldier._id, stat);
+    Soldiers.update({_id: soldier._id},
+                    {$inc: {cp: -1}});
   },
   levelup: function(soldier_id) {
     check(soldier_id, String);
@@ -169,6 +176,11 @@ Meteor.methods({
       var newhp = soldier.maxhp + addhp;
       Soldiers.update({_id: soldier_id},
                       {$inc: {level: 1, maxhp: addhp, cp: 5}, $set: {hp: newhp}});
+      var chance = rnd(1,4);
+      if (chance == 1) addStat(soldier_id, 'agility');
+      if (chance == 2) addStat(soldier_id, 'concentration');
+      if (chance == 3) addStat(soldier_id, 'health');
+      if (chance == 4) addStat(soldier_id, 'wisdom');
     }
   },
   sendchat: function(message) {

@@ -9,7 +9,7 @@ html, body {
     width: 100%; 
     height: 100%;
     color:#F4F4F4;
-	font-family: 'Roboto', sans-serif;
+	font-family: Terminal, sans-serif;
 	font-size:15px;    
 }
 a,a:visited,a:active {
@@ -56,6 +56,21 @@ ul {
 	width:300px;
 	padding:10px;
 }
+#chatSmall {
+	position:fixed;
+	bottom:0;
+	width:100%;
+	background:#000;
+	border-top: 1px solid red;
+	height:22px;
+	z-index: 99;
+}
+#chatSmall p {
+	color:#F4F4F4;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
 #chat {
 	position:fixed;
 	bottom:0;
@@ -63,25 +78,46 @@ ul {
 	background:#000;
 	color:#F4F4F4;
 	border-top: 1px solid red;
-	height:300px;
+	height:222px;
 	z-index: 99;
-	padding:15px;
+	padding:10px;
 }
 #chat span {
 	font-size: 11px;
 	color: #D4D4D4;
+	position:absolute;
+	right: 10px;
+	top: 10px;
 }
 #chat p {
 	margin: 0;
 	padding: 2px;
+	font-family: terminal;
 }
 #chat input {
-	width:350px;
+	margin: 0;
+	padding: 5px;
+	width:100%;
+    border: 1px solid rgba(0,246,10,0.9); 
+    -webkit-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    -moz-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    background: rgba(0,0,0,0.5);
+    color: #F4F4F4;
+}
+#chat input:focus {
+	border: 1px solid rgba(246,0,10,0.9); 
 }
 .chats {
-	height:225px;
-	max-height:225px;
-	overflow-y: scroll;
+	height:175px;
+	max-height:175px;
+	overflow-y: hidden;
 }
 .sidebar {
 	width:300px;
@@ -96,6 +132,22 @@ ul {
 	border-radius: 5px;
 	margin-bottom: 10px;
 	padding:10px;
+}
+#ship h3 {
+	clear: both;
+}
+.resource {
+	float:left;
+	width:40px;
+	text-align: center;
+}
+.resources img {
+	width:32px;
+	height:32px;
+}
+.resource p {
+	margin: 0;
+	padding: 0;
 }
 #mysoldiers .soldier {
 	height:80px;
@@ -132,15 +184,18 @@ ul {
 }
 .actionselect label {
 	width: 50px;
+	margin: 1px;
+	text-align: center;
 	font-size: 11px;
 	float: left;
 }
 .actionselect input {
 	display: block;
+	margin-left: 20px;
 }
 .actionselected {
-	color: red;
 	font-weight: bold;
+	text-shadow: 0 0 2px rgba(255,0,0,0.5);
 }
 .soldierhp {
 	clear: both;
@@ -194,7 +249,7 @@ ul {
 	right: 0;
 	margin: 0 5px 5px 0;
 }
-.button {
+.button,.login-button {
 	outline: none;
 	cursor: pointer;
 	text-align: center;
@@ -214,13 +269,13 @@ ul {
 	background: -moz-linear-gradient(top,  #faa51a,  #f47a20);
 	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');	
 }
-.button:hover {
+.button:hover,.login-button:hover {
 	background: #f47c20;
 	background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
 	background: -moz-linear-gradient(top,  #f88e11,  #f06015);
 	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');	
 }
-.button:active {
+.button:active,.login-button:active {
 	color: #fcd3a5;
 	background: -webkit-gradient(linear, left top, left bottom, from(#f47a20), to(#faa51a));
 	background: -moz-linear-gradient(top,  #f47a20,  #faa51a);
@@ -228,4 +283,25 @@ ul {
 }
 .button:visited {
 	color:#f4f4f4;
+}
+.login-close-text {
+	position: absolute;
+	right:3px;
+	top:5px;
+}
+.login-form label {
+	display: block;
+}
+.login-form input {
+	width: 100%;
+}
+#login-buttons a {
+	cursor: pointer;
+}
+.login-button {
+	margin: 10px;
+	width: 145px;
+}
+#login-username-label {
+	margin-top: 10px;
 }

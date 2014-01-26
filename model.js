@@ -11,8 +11,9 @@ exp2level = [0, 0, 50, 100, 200, 400, 800, 1600, 3000, 6000, 12000,
 if (Meteor.isServer) {
   // publish all the non-idle players.
   Meteor.publish('userData', function () {
-    return Users.find({idle: false},
-        {fields: {'last_keepalive': 1,'idle': 1, 'username': 1, 'fuel': 1, 'planet': 1, 'soldierCount': 1, 'soldiers': 1}});
+    // return Users.find({idle: false},
+    //     {fields: {'last_keepalive': 1,'idle': 1, 'username': 1, 'fuel': 1, 'planet': 1, 'soldierCount': 1, 'soldiers': 1}});
+    return Users.find({idle: false});  
   });
   Meteor.publish('planets', function() {
     return Planets.find();
@@ -21,6 +22,6 @@ if (Meteor.isServer) {
     return Soldiers.find();
   });
   Meteor.publish('chat', function() {
-    return Chat.find({}, {limit: 30, sort: {time: -1}});
+    return Chat.find({}, {limit: 10, sort: {time: -1}});
   });
 }

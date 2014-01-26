@@ -80,13 +80,13 @@ if (Meteor.isClient) {
     }
     return planet;
   };
-  Template.ship.fuelLevel = function () {
-    var fuel = 0;
+  Template.ship.resources = function() {
+    var resources = ['rRed', 'rGreen', 'rWhite', 'rBlue', 'rBlack'];
+    return resources;
+  }
+  Template.ship.player = function () {
     var player = Users.findOne({_id: Meteor.userId()});
-    if (player) {
-      fuel = player.fuel;
-    }
-    return fuel;
+    return player;
   };
   Template.ship.fuelPercent = function () {
     var fuel = 0;
@@ -280,16 +280,16 @@ if (Meteor.isClient) {
       }
     },
     'click .addconcentration': function() {
-      Meteor.call('addstat', soldier._id, 'concentration');
+      Meteor.call('usecp', soldier._id, 'concentration');
     },
     'click .addagility': function() {
-      Meteor.call('addstat', soldier._id, 'agility');
+      Meteor.call('usecp', soldier._id, 'agility');
     },
     'click .addhealth': function() {
-      Meteor.call('addstat', soldier._id, 'health');
+      Meteor.call('usecp', soldier._id, 'health');
     },
     'click .addwisdom': function() {
-      Meteor.call('addstat', soldier._id, 'wisdom');
+      Meteor.call('usecp', soldier._id, 'wisdom');
     }
   })
 
@@ -311,7 +311,7 @@ Meteor.startup(function () {
 
     TweenLite.set($('.sidebar'), {perspective:400});
     Session.set('showSoldiers', true);
-    Session.set('showConsole', true);
+    // Session.set('showConsole', true);
 
     $('.starfield').starfield({
       starColor:  'rgba(255,255,255,1)',
