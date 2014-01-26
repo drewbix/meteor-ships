@@ -137,6 +137,14 @@
       <div class="soldierlevel">
         Level {{soldier.level}}
       </div>
+      <div class="actionselect">
+        {{#each actions}}
+        <label class="{{actionselected}}">
+          {{.}}
+          <input type="radio" name="actionselect" value="{{.}}" {{#isChecked}} checked{{/isChecked}}/>
+        </label>
+        {{/each}}
+      </div>
       <div class="soldierhp">
         <p>Hitpoints: {{soldier.hp}} / {{soldier.maxhp}}</p>
         <p>Rating: {{rating}}</p>

@@ -4,6 +4,13 @@ Accounts.onCreateUser(function(options, user) {
   user.planet = "Jute";
   user.idle = false;
   user.soldierCount = 0;
+  //resources
+  user.gold = 100;
+  user.rBlue = 0;
+  user.rBlack = 0;
+  user.rRed = 0;
+  user.rGreen = 0;
+  user.rWhite = 0;
   
   // We still want the default hook's 'profile' behavior.
   if (options.profile)
@@ -56,7 +63,6 @@ function createSoldier() {
                 wisdom: rnd(18,35),
                 action: "training",
                 owned: false}
-
   return newSoldier;
 }
 
@@ -119,6 +125,13 @@ Meteor.methods({
     }
 
   },
+  changeaction: function(soldier_id, newaction) {
+    check(soldier_id, String);
+    check(newaction, String);
+    //probably should add validation to make sure the calling client owns the soldier
+    Soldiers.update({_id: soldier_id},
+                    {$set: {action: newaction}});
+  },
   addstat: function(soldier_id, stat) {
     check(soldier_id, String);
     check(stat, String);
@@ -151,10 +164,10 @@ Meteor.methods({
     var level = soldier.level;
     var exp = soldier.exp;
     var needed = exp2level[level];
-    if (exp >= needed) {
+    if (exp >= needed) {      
       var addhp = rnd(8,12) + Math.floor(soldier.level / 2);
       var newhp = soldier.maxhp + addhp;
-    Soldiers.update({_id: soldier_id},
+      Soldiers.update({_id: soldier_id},
                       {$inc: {level: 1, maxhp: addhp, cp: 5}, $set: {hp: newhp}});
     }
   },
@@ -185,10 +198,10 @@ Meteor.setInterval(function () {
 Meteor.setInterval(function () {
 //increase fuel by 1 every 1 seconds
   // Users.update({fuel: {$lt : 2000}},
-  //               {$inc: {fuel: 50}},
+  //               {$inc: {fuel: 50}}, 
   //               {multi: true});
   // Users.update({fuel: {$gt : 2000}},
-  //               {$set: {fuel: 2000}},
+  //               {$set: {fuel: 2000}}, 
   //               {multi: true});
   //generate soldiers
   populate();

@@ -240,7 +240,33 @@ if (Meteor.isClient) {
     soldier = Soldiers.findOne({_id: soldierid});
     return (soldier.cp > 0);
   }
+  Template.soldierview.actions = function() {
+    var actions = ['training', 'resting', 'rBlue', 'rBlack', 'rRed', 'rGreen', 'rWhite'];
+    return actions;
+  };
+  Template.soldierview.actionselected = function() {
+    var a = this;
+    var soldierid = Session.get('soldierView');
+    soldier = Soldiers.findOne({_id: soldierid});
+    var result='';
+    if (soldier.action == a) result="actionselected";
+    return result;
+
+  };
+  Template.soldierview.isChecked = function() {
+    var a = this;
+    var soldierid = Session.get('soldierView');
+    soldier = Soldiers.findOne({_id: soldierid});
+    var result = '';
+    if (soldier.action == a) result = 'checked';
+    return result;
+  }
   Template.soldierview.events({
+    'change input[name="actionselect"]': function(e) {
+      var soldierid = Session.get('soldierView');
+      var newaction = $(e.currentTarget).val();
+      Meteor.call('changeaction', soldierid, newaction);
+    },
     'click .levelup': function() {
       var soldierid = Session.get('soldierView');
       var soldier = Soldiers.findOne({_id: soldierid});

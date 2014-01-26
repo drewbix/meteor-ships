@@ -110,11 +110,11 @@ ul {
 }
 #soldierview {
 	width:400px;
-	height:300px;
+	height:400px;
 	position:fixed;
 	top:50%;
 	left:50%;
-	margin-top:-150px;
+	margin-top:-200px;
 	margin-left:-200px;
 	border:1px solid red;
 	background-color:rgba(0,0,0,0.5);
@@ -129,6 +129,22 @@ ul {
 	position: absolute;
 	top: 15px;
 	right: 15px;
+}
+.actionselect label {
+	width: 50px;
+	font-size: 11px;
+	float: left;
+}
+.actionselect input {
+	display: block;
+}
+.actionselected {
+	color: red;
+	font-weight: bold;
+}
+.soldierhp {
+	clear: both;
+	padding-top: 5px;
 }
 .progressbar {
 	width:190px;
@@ -151,8 +167,8 @@ ul {
 	background-color: rgba(10,10,10,0.8);
 	position: relative;
 	width:300px;
-	height:70px;
-	max-height:70px;
+	height:47px;
+	max-height:47px;
 	border:1px solid #666;
 	border-radius:5px;
 	margin:5px;
@@ -161,14 +177,18 @@ ul {
 	overflow:hidden;
 }
 #barracks .soldier:hover {
-	height:150px;
-	max-height:150px;
+	height: 135px;
+	max-height: 135px;
 	border:1px solid rgba(0,246,10,0.9);
+}
+#barracks .soldier:hover .hireButton {
+	display: block;
 }
 #barracks p {
 	margin: 0;
 }
 .hireButton {
+	display: none;
 	position: absolute;
 	bottom: 0;
 	right: 0;
