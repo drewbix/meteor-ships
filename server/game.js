@@ -62,6 +62,7 @@ function createSoldier() {
                 health: rnd(18,35),
                 wisdom: rnd(18,35),
                 action: "training",
+                actionTime: 0,
                 owned: false}
   return newSoldier;
 }
@@ -100,6 +101,31 @@ function addStat(soldier_id, stat) {
     case "wisdom":
       Soldiers.update({_id: soldier_id},
                       {$inc: {wisdom: 1}});
+      break;
+  }
+}
+
+function addResource(player_id, resource, amount) {
+  switch(resource) {
+    case "rRed":
+      Users.update({_id: player_id},
+                   {$inc: {rRed: amount}});
+      break;
+    case "rGreen":
+      Users.update({_id: player_id},
+                   {$inc: {rGreen: amount}});
+      break;
+    case "rBlue":
+      Users.update({_id: player_id},
+                   {$inc: {rBlue: amount}});
+      break;
+    case "rWhite":
+      Users.update({_id: player_id},
+                   {$inc: {rWhite: amount}});
+      break;
+    case "rBlack":
+      Users.update({_id: player_id},
+                   {$inc: {rBlack: amount}});
       break;
   }
 }
@@ -152,8 +178,38 @@ Meteor.methods({
     check(soldier_id, String);
     check(newaction, String);
     //probably should add validation to make sure the calling client owns the soldier
+    var timestamp = (new Date()).getTime();
     Soldiers.update({_id: soldier_id},
-                    {$set: {action: newaction}});
+                    {$set: {action: newaction, actionTime: timestamp}});
+  },
+  stopaction: function(soldier_id) {
+    check(soldier_id, String);
+    //probably should add validation to make sure the calling client owns the soldier
+    var timestamp = (new Date()).getTime();
+    var soldier = Soldiers.findOne({_id: soldier_id});
+    var timediff = timestamp - soldier.actionTime;
+    timediff = Math.floor(timediff/1000);
+    
+    //do some checks
+    if (timediff <= 5) {
+      var msg = soldier.name + ' was not gone long enough to do anything';
+      Chat.insert({name: 'Game', message: msg, time: timestamp});
+    }
+    else {
+      var max = Math.floor(timediff/5);
+      var toAdd = 0;
+      for (var i = 0; i < max; i++) {
+        toAdd += rnd(1,3);
+      }
+      var msg = soldier.name + ' returned with  ' + toAdd + ' ' + soldier.action;
+      addResource(this.userId, soldier.action, toAdd);
+      Chat.insert({name: 'Game', message: msg, time: timestamp});
+    }
+
+    //always do this last
+    Soldiers.update({_id: soldier_id},
+                    {$set: {action: "idle", actionTime: 0}});
+
   },
   usecp: function(soldier_id, stat) {
     check(soldier_id, String);
@@ -191,6 +247,13 @@ Meteor.methods({
     if (player) {
       Chat.insert({name: player.username, message: message, time: time});
     }
+  },
+  reset: function() {
+    //for dev purposes only! only to be called manually
+    //TODO: make admin accounts
+    Users.remove({});
+    Soldiers.remove({});
+    Planets.update({}, {$set: {soldiers: [], soldierCount: 0}}, {multi: true});
   }
 });
 
@@ -219,7 +282,7 @@ Meteor.setInterval(function () {
   populate();
   //soldier actions, training / harvest etc
   soldierTraining();
-}, 19*1000);
+}, 20*1000);
 
 //first start up intialize collections
 Meteor.startup(function () {

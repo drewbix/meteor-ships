@@ -260,12 +260,24 @@ if (Meteor.isClient) {
     var result = '';
     if (soldier.action == a) result = 'checked';
     return result;
-  }
+  };
+  Template.soldierview.noaction = function() {
+    var soldierid = Session.get('soldierView');
+    soldier = Soldiers.findOne({_id: soldierid});
+    var result = false;
+    if (soldier.actionTime == 0) result = true;
+    return result;
+  };
   Template.soldierview.events({
     'change input[name="actionselect"]': function(e) {
       var soldierid = Session.get('soldierView');
       var newaction = $(e.currentTarget).val();
       Meteor.call('changeaction', soldierid, newaction);
+    },
+    'click .recall-button': function() {
+      var soldierid = Session.get('soldierView');
+      var soldier = Soldiers.findOne({_id: soldierid});
+      Meteor.call('stopaction', soldier._id);
     },
     'click .levelup': function() {
       var soldierid = Session.get('soldierView');

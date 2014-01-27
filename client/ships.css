@@ -1,3 +1,23 @@
+@-webkit-keyframes borderalert {
+    0% { border-color: black; }
+    50% { border-color: orange; }
+    100% { border-color: black; }
+}
+@-moz-keyframes borderalert {
+    0% { border-color: black; }
+    50% { border-color: orange; }
+    100% { border-color: black; }
+}
+@-o-keyframes borderalert {
+    0% { border-color: black; }
+    50% { border-color: orange; }
+    100% { border-color: black; }
+}
+@keyframes borderalert {
+    0% { border-color: black; }
+    50% { border-color: orange; }
+    100% { border-color: black; }
+}
 /* general */
 * {
 	box-sizing: border-box;
@@ -136,6 +156,9 @@ ul {
 #ship h3 {
 	clear: both;
 }
+.fuel {
+	padding-top: 10px;
+}
 .resource {
 	float:left;
 	width:40px;
@@ -210,7 +233,7 @@ ul {
 .progressText {
 	width: 80px;
 	float:left;
-	margin:0 0 0 5px;
+	margin:5px 0 0 5px;
 }
 .progress {
 	height:100%;
@@ -304,4 +327,11 @@ ul {
 }
 #login-username-label {
 	margin-top: 10px;
+}
+.highlight {
+	border: 1px solid black;
+  -webkit-animation: borderalert 5s infinite; /* Safari 4+ */
+  -moz-animation:    borderalert 5s infinite; /* Fx 5+ */
+  -o-animation:      borderalert 5s infinite; /* Opera 12+ */
+  animation:         borderalert 5s infinite; /* IE 10+ */
 }

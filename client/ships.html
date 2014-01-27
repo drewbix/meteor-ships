@@ -88,11 +88,11 @@
         <p>{{player.rBlack}}</p>
       </div>
   </div>
-  <h3>Fuel</h3>
+  <h3 class="fuel">Fuel</h3>
   <div class="progressbar">
   	<div class="progress" style="width:{{fuelPercent}}%">&nbsp;</div>
   </div>
-  <p class="progressText">{{player.fuel}} / 2000</p>
+  <p class="progressText">{{player.fuel}}/2000</p>
   <br class="clear" />
 </div>
 </template>
@@ -142,13 +142,12 @@
   <h3>Your Soldiers</h3>
   <ul>
   {{#each soldiers}}
-    <li class="soldier">
-      {{name}} - Level {{level}}, to next: {{next}}
-      {{#if levelup}}
-        <strong>!!</strong>
-      {{/if}}
+    <li class="soldier {{#if levelup}}highlight{{/if}}">
+      Name: {{name}}
       <br />
-      {{exp}} experience | health: {{health}}
+      Level: {{level}}
+      <br />
+      Needed: {{next}}
       <br />
       Action: {{action}}
     </li>
@@ -166,12 +165,16 @@
         Level {{soldier.level}}
       </div>
       <div class="actionselect">
-        {{#each actions}}
-        <label class="{{actionselected}}">
-          {{.}}
-          <input type="radio" name="actionselect" value="{{.}}" {{#isChecked}} checked{{/isChecked}}/>
-        </label>
-        {{/each}}
+        {{#if noaction}}
+          {{#each actions}}
+          <label class="{{actionselected}}">
+            {{.}}
+            <input type="radio" name="actionselect" value="{{.}}" {{#isChecked}} checked{{/isChecked}}/>
+          </label>
+          {{/each}}
+        {{else}}
+          <p>{{soldier.name}} is currently {{soldier.action}} <a class="button recall-button">Recall</a></p>
+        {{/if}}
       </div>
       <div class="soldierhp">
         <p>Hitpoints: {{soldier.hp}} / {{soldier.maxhp}}</p>
