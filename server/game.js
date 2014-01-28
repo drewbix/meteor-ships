@@ -140,6 +140,58 @@ function getDistance(planet1, planet2) {
 }
 
 Meteor.methods({
+  battleAI: function(soldier_id) {
+    check(soldier_id, String);
+    var soldier = Soldiers.findOne({_id: soldier_id});
+    var timestamp,msg,dmg;
+    var totaldmg = 0;
+    var gunStats = {rate_of_fire: 1,
+                    rounds: 5,
+                    roundsFired: 0,
+                    reload_time: 40,
+                    reloading: 0,
+                    minDmg: 4,
+                    maxDmg: 9,
+                    accuracy: 50};
+
+    var game = Meteor.setInterval(function() {
+      //end the game
+      if (totaldmg > 100) {
+        Meteor.clearInterval(game);
+        timestamp = (new Date()).getTime();
+        msg = 'game ended';
+        Chat.insert({name: 'Game', message: msg, time: timestamp});        
+      }
+
+      if (gunStats.reloading > 0 && gunStats.reloading <= gunStats.reload_time) {
+        //reloading
+        gunStats.reloading += 1;
+      } 
+      else if (gunStats.reloading > gunStats.reload_time) {
+        //done reloading
+        gunStats.reloading = 0;
+      }
+      else {
+        //firing
+        if (gunStats.roundsFired < gunStats.rounds) {
+          timestamp = (new Date()).getTime();
+          dmg = rnd(gunStats.minDmg, gunStats.maxDmg);
+          if ( (rnd(1,100)) > gunStats.accuracy ) dmg = 0;
+          msg = soldier.name + ' did ' + dmg + ' damage!';
+          if (dmg == 0) msg = soldier.name + ' missed!';
+          Chat.insert({name: 'Game', message: msg, time: timestamp});
+          gunStats.roundsFired += 1;
+          totaldmg += dmg;
+        }
+        else {
+          //done firing
+          gunStats.reloading = 1;
+          gunStats.roundsFired = 0;
+        }        
+      }
+    }, 100)
+
+  },
   keepalive: function (player_id) {
     check(player_id, String);
     Users.update({_id: player_id},
