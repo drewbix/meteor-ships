@@ -335,3 +335,12 @@ ul {
   -o-animation:      borderalert 5s infinite; /* Opera 12+ */
   animation:         borderalert 5s infinite; /* IE 10+ */
 }
+.challenge,.battle {
+	background: #333;
+	position:fixed;
+	top:0;
+	left: 50%;
+	margin-left:-150px;
+	width:300px;
+	padding:10px;
+}

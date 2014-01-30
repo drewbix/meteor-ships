@@ -181,6 +181,9 @@ if (Meteor.isClient) {
   //
   // Chat template
   //
+  Template.chat.rendered = function() {
+    if (Session.get('showConsoloe') == false) console.log('rendered!');
+  };
   Template.chat.show = function() {
     return Session.get('showConsole');
   };
@@ -303,7 +306,55 @@ if (Meteor.isClient) {
     'click .addwisdom': function() {
       Meteor.call('usecp', soldier._id, 'wisdom');
     }
-  })
+  });
+  //
+  // Challenge Template
+  //
+  Template.challenge.show = function() {
+    return true;
+  };
+  Template.challenge.users_online = function() {
+    return Users.find({idle: false, _id: {$ne: Meteor.userId()}});
+  };
+  Template.challenge.events({
+    'click .challenge-user': function(e) {
+      Meteor.call('start_new_battle', Meteor.userId(), this._id);
+    }
+  });
+  //
+  // Battle Template
+  //
+  Template.battle.show = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    return player.battle_id !== null;
+  };
+  Template.battle.battle_id = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battleid = player.battle_id;
+    return Battles.findOne({_id: battleid});
+  };
+  Template.battle.player1 = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    if (!battle) return false;
+    var challenger = Users.findOne({_id: battle.player1});;
+    if (!challenger) return false;
+    return challenger.username;
+  }
+  Template.battle.teams = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    if (!battle) return false;
+    var team1 = battle.team1;
+    var team2 = battle.team2;
+    return team1.concat(team2);
+  }
+  Template.battle.challenger = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    if (!battle) return false;
+    return (battle.player1 == Meteor.userId());
+  };
 
 }
 
@@ -343,6 +394,7 @@ Meteor.startup(function () {
     Meteor.subscribe('planets');
     Meteor.subscribe('soldiers');
     Meteor.subscribe('chat');
+    Meteor.subscribe('battles');
 
   });
 

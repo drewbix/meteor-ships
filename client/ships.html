@@ -19,6 +19,8 @@
         {{> ship}}
         {{> mysoldiers}}
       </div>
+      {{> challenge}}
+      {{> battle}}
     {{else}}
         <p>You must be logged in to play.</p>
     {{/if}}
@@ -145,6 +147,8 @@
     <li class="soldier {{#if levelup}}highlight{{/if}}">
       Name: {{name}}
       <br />
+      HP: {{hp}}/{{maxhp}}
+      <br />
       Level: {{level}}
       <br />
       Needed: {{next}}
@@ -214,6 +218,34 @@
       </ul>
       <p>Character Points: {{soldier.cp}}</p>
       <span class="levelup button"> Level Up </span>
+    </div>
+  {{/if}}
+</template>
+
+<template name="challenge">
+{{#if show}}
+  <div class="challenge">
+  <h3>Start a fight!</h3>
+  {{#each users_online}}
+    <p>{{username}} <a class="challenge-user">Fight</a></p>
+  {{/each}}
+  </div>
+{{/if}}
+</template>
+
+<template name="battle">
+  {{#if show}}
+    <div class="battle">
+    {{#if challenger}}
+      <h3>Battle</h3>
+      <p>Waiting for opponent to respond {{battle_id._id}}</p>
+      <p>{{teams}}</p>
+    {{else}}
+      <h3>Challenge!</h3>
+      <p>{{player1}} has challenged you to a fight!</p>
+      <p class="button"> Accept </p>
+      <p class="button"> Decline </p>
+    {{/if}}
     </div>
   {{/if}}
 </template>
