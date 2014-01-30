@@ -217,6 +217,7 @@
         </li>
       </ul>
       <p>Character Points: {{soldier.cp}}</p>
+      <span class="fire button"> Fire </span>
       <span class="levelup button"> Level Up </span>
     </div>
   {{/if}}
@@ -239,7 +240,6 @@
     {{#if challenger}}
       <h3>Battle</h3>
       <p>Waiting for opponent to respond {{battle_id._id}}</p>
-      <p>{{teams}}</p>
     {{else}}
       <h3>Challenge!</h3>
       <p>{{player1}} has challenged you to a fight!</p>

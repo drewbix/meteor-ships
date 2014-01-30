@@ -294,6 +294,10 @@ if (Meteor.isClient) {
         alert('not enough experience!');
       }
     },
+    'click .fire': function() {
+      Meteor.call('fire', soldier._id);
+      Session.set('soldierView', null);
+    },
     'click .addconcentration': function() {
       Meteor.call('usecp', soldier._id, 'concentration');
     },
