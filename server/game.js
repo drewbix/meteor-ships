@@ -65,7 +65,8 @@ function createSoldier() {
                 action: "training",
                 actionTime: 0,
                 owned: false,
-                battle_id: null}
+                battle_id: null,
+                image: rnd(1,60)}
   return newSoldier;
 }
 

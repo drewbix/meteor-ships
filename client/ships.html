@@ -1,6 +1,6 @@
 <head>
   <title>ships</title> 
-  <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -145,8 +145,10 @@
   <ul>
   {{#each soldiers}}
     <li class="soldier {{#if levelup}}highlight{{/if}}">
-      Name: {{name}}
-      <br />
+    <div class="infoRight">
+    <img src="images/soldiers/soldier{{image}}.jpg" />
+    {{name}}
+    </div>
       HP: {{hp}}/{{maxhp}}
       <br />
       Level: {{level}}
@@ -164,61 +166,66 @@
 <template name="soldierview">
   {{#if show}}
     <div id="soldierview">
-      <h2>{{soldier.name}}</h2>
-      <div class="soldierlevel">
-        Level {{soldier.level}}
+      <div class="topbar">
+        <span class="close">Close</span>
       </div>
-      <div class="actionselect">
-        {{#if noaction}}
-          {{#each actions}}
-          <label class="{{actionselected}}">
-            {{.}}
-            <input type="radio" name="actionselect" value="{{.}}" {{#isChecked}} checked{{/isChecked}}/>
-          </label>
-          {{/each}}
-        {{else}}
-          <p>{{soldier.name}} is currently {{soldier.action}} <a class="button recall-button">Recall</a></p>
-        {{/if}}
+      <div class="soldierview-inner">
+        <h2>{{soldier.name}}</h2>
+        <div class="soldierlevel">
+          Level {{soldier.level}}
+        </div>
+        <div class="actionselect">
+          {{#if noaction}}
+            {{#each actions}}
+            <label class="{{actionselected}}">
+              {{.}}
+              <input type="radio" name="actionselect" value="{{.}}" {{#isChecked}} checked{{/isChecked}}/>
+            </label>
+            {{/each}}
+          {{else}}
+            <p>{{soldier.name}} is currently {{soldier.action}} <a class="button recall-button">Recall</a></p>
+          {{/if}}
+        </div>
+        <div class="soldierhp">
+          <p>Hitpoints: {{soldier.hp}} / {{soldier.maxhp}}</p>
+          <p>Rating: {{rating}}</p>
+        </div>
+        <div class="soldierexp">
+        Exp: {{soldier.exp}}
+        <br />
+        To Next: {{tonext}}
+        </div>
+        <h3>Stats</h3>
+        <ul>
+          <li>
+            Agility: {{soldier.agility}}
+            {{#if hascp}}
+              <a class="addagility" href="#">+</a>
+            {{/if}}
+          </li>
+          <li>
+            Concentration: {{soldier.concentration}}
+            {{#if hascp}}
+              <a class="addconcentration" href="#">+</a>
+            {{/if}}
+          </li>        
+          <li>
+            Health: {{soldier.health}}
+            {{#if hascp}}
+              <a class="addhealth" href="#">+</a>
+            {{/if}}
+          </li>
+          <li>
+            Wisdom: {{soldier.wisdom}}
+            {{#if hascp}}
+              <a class="addwisdom" href="#">+</a>
+            {{/if}}
+          </li>
+        </ul>
+        <p>Character Points: {{soldier.cp}}</p>
+        <span class="fire button"> Fire </span>
+        <span class="levelup button"> Level Up </span>
       </div>
-      <div class="soldierhp">
-        <p>Hitpoints: {{soldier.hp}} / {{soldier.maxhp}}</p>
-        <p>Rating: {{rating}}</p>
-      </div>
-      <div class="soldierexp">
-      Exp: {{soldier.exp}}
-      <br />
-      To Next: {{tonext}}
-      </div>
-      <h3>Stats</h3>
-      <ul>
-        <li>
-          Agility: {{soldier.agility}}
-          {{#if hascp}}
-            <a class="addagility" href="#">+</a>
-          {{/if}}
-        </li>
-        <li>
-          Concentration: {{soldier.concentration}}
-          {{#if hascp}}
-            <a class="addconcentration" href="#">+</a>
-          {{/if}}
-        </li>        
-        <li>
-          Health: {{soldier.health}}
-          {{#if hascp}}
-            <a class="addhealth" href="#">+</a>
-          {{/if}}
-        </li>
-        <li>
-          Wisdom: {{soldier.wisdom}}
-          {{#if hascp}}
-            <a class="addwisdom" href="#">+</a>
-          {{/if}}
-        </li>
-      </ul>
-      <p>Character Points: {{soldier.cp}}</p>
-      <span class="fire button"> Fire </span>
-      <span class="levelup button"> Level Up </span>
     </div>
   {{/if}}
 </template>

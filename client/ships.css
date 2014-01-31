@@ -29,7 +29,7 @@ html, body {
     width: 100%; 
     height: 100%;
     color:#F4F4F4;
-	font-family: Terminal, sans-serif;
+	font-family: "Oxygen", sans-serif;
 	font-size:15px;    
 }
 a,a:visited,a:active {
@@ -112,7 +112,6 @@ ul {
 #chat p {
 	margin: 0;
 	padding: 2px;
-	font-family: terminal;
 }
 #chat input {
 	margin: 0;
@@ -175,17 +174,25 @@ ul {
 #mysoldiers .soldier {
 	height:80px;
 	cursor: pointer;
+	font-size:14px;
 }
 #mysoldiers .soldier:hover {
-	height:80px;
 	background-color:rgba(40,40,40,0.8);
 }
 #mysoldiers ul li {
 	padding:5px;
 }
+.infoRight {
+	float: right;
+}
+.infoRight img {
+	width: 60px;
+	height: 60px;
+	display: block;
+}
 #soldierview {
 	width:400px;
-	height:400px;
+	height:420px;
 	position:fixed;
 	top:50%;
 	left:50%;
@@ -193,7 +200,21 @@ ul {
 	margin-left:-200px;
 	border:1px solid red;
 	background-color:rgba(0,0,0,0.5);
-	padding:15px;
+	padding:0;
+}
+.soldierview-inner {
+	padding: 15px;
+	position: relative;
+}
+.topbar {
+	background-color: #222;
+	height:30px;
+	line-height: 30px;
+}
+.close {
+	float: right;
+	padding-right: 5px;
+	cursor: pointer;
 }
 .levelup {
 	position: absolute;

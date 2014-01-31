@@ -272,6 +272,9 @@ if (Meteor.isClient) {
     return result;
   };
   Template.soldierview.events({
+    'click .close': function() {
+      Session.set('soldierView', undefined)
+    },
     'change input[name="actionselect"]': function(e) {
       var soldierid = Session.get('soldierView');
       var newaction = $(e.currentTarget).val();
@@ -296,7 +299,7 @@ if (Meteor.isClient) {
     },
     'click .fire': function() {
       Meteor.call('fire', soldier._id);
-      Session.set('soldierView', null);
+      Session.set('soldierView', undefined);
     },
     'click .addconcentration': function() {
       Meteor.call('usecp', soldier._id, 'concentration');
