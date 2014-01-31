@@ -103,6 +103,20 @@ function soldierTraining() {
   });
 }
 
+function checkHealthBonus(soldier_id) {
+  var soldier = Soldiers.findOne({_id: soldier_id});
+  if (soldier.health %5 == 0) {
+    var x = (soldier.health / 5);
+    var addhp = rnd(x,(x*2));
+    Soldiers.update({_id: soldier_id},
+                    {$inc: {maxhp: addhp}});
+    
+    timestamp = (new Date()).getTime();
+    msg = soldier.name + ' got bonus hp: ' + addhp;
+    Chat.insert({name: 'Game', message: msg, time: timestamp});  
+  }
+}
+
 function addStat(soldier_id, stat) {
   switch(stat) {
     case "concentration":
@@ -116,6 +130,7 @@ function addStat(soldier_id, stat) {
     case "health":
       Soldiers.update({_id: soldier_id},
                       {$inc: {health: 1}});
+      checkHealthBonus(soldier_id);
       break;
     case "wisdom":
       Soldiers.update({_id: soldier_id},
