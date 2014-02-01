@@ -25,6 +25,10 @@ function rnd(minv, maxv){
 }
 
 function generateName() {
+  return generate_name('default');
+}
+
+function generateNameOld() {
   name = "";
   vowels = ["a","e","i","o","u"];
   cons = ["b", "c", "d","g","h","j","k","l","m","n","p","r","s","t","v","w"];
@@ -54,7 +58,7 @@ function createSoldier() {
   newSoldier = {name: generateName(),
                 level: 1,
                 exp: rnd(0,500),
-                cp: rnd(9,18),
+                cp: rnd(3,9),
                 maxhp: rnd(100,150),
                 hp: 0,
                 shield: 0,
@@ -97,7 +101,7 @@ function populate() {
 
 function soldierTraining() {
   Soldiers.find({action: "training", owned: true}).forEach(function(soldier) {
-    var addexp = soldier.wisdom;
+    var addexp = soldier.wisdom*3;
     Soldiers.update({_id: soldier._id},
                     {$inc: {exp: addexp}});
   });
@@ -430,8 +434,9 @@ Meteor.methods({
     if (exp >= needed) {      
       var addhp = rnd(8,12) + Math.floor(soldier.level / 2);
       var newhp = soldier.maxhp + addhp;
+      var addcp = rnd(3,5);
       Soldiers.update({_id: soldier_id},
-                      {$inc: {level: 1, maxhp: addhp, cp: 5}, $set: {hp: newhp}});
+                      {$inc: {level: 1, maxhp: addhp, cp: addcp}, $set: {hp: newhp}});
       var chance = rnd(1,4);
       if (chance == 1) addStat(soldier_id, 'agility');
       if (chance == 2) addStat(soldier_id, 'concentration');
@@ -482,7 +487,7 @@ Meteor.setInterval(function () {
   populate();
   //soldier actions, training / harvest etc
   soldierTraining();
-}, 20*1000);
+}, 30*1000);
 
 //first start up intialize collections
 Meteor.startup(function () {

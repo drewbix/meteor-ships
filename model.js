@@ -23,7 +23,7 @@ if (Meteor.isServer) {
     return Soldiers.find();
   });
   Meteor.publish('chat', function() {
-    return Chat.find({}, {limit: 9, sort: {time: -1}});
+    return Chat.find({}, {limit: 8, sort: {time: -1}});
   });
   Meteor.publish('battles', function() {
     return Battles.find();
