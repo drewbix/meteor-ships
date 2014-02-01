@@ -464,18 +464,12 @@ Meteor.methods({
 
 Meteor.setInterval(function () {
   var now = (new Date()).getTime();
-  var idle_threshold = now - 70*1000; // 70 sec
-  var remove_threshold = now - 60*60*1000; // 1hr
+  var idle_threshold = now - 20*1000;
 
   Users.update({last_keepalive: {$lt: idle_threshold}},
-                 {$set: {idle: true}});
+               {$set: {idle: true}},
+               {multi: true});
 
-  // XXX need to deal with people coming back!
-  // Players.remove({$lt: {last_keepalive: remove_threshold}});
-
-}, 30*1000);
-
-Meteor.setInterval(function () {
 //increase fuel by 1 every 1 seconds
   // Users.update({fuel: {$lt : 2000}},
   //               {$inc: {fuel: 50}}, 
