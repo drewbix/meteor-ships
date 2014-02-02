@@ -11,6 +11,7 @@
 	{{> player}}
     {{#if currentUser}}
       {{> controls}}
+      {{> home}}
       {{> chat}}
       {{> planets}}
       {{> barracks}}
@@ -34,16 +35,38 @@
 {{/constant}}
 </template>
 
+<template name="home">
+{{#if show}}
+<div id="home">
+  <h3>Getting Started</h3>
+  <ol>
+    <li>Hire some soldiers</li>
+    <li>Mine some resources</li>
+    <li>Make some money</li>
+    <li>Buy some weapons</li>
+    <li>Fight some people</li>
+    <li>Explore the galaxy</li>
+  </ol>
+</div>
+{{/if}}
+</template>
+
 <template name="controls">
 {{#if show}}
 <div id="controls">
-  <a class="soldiertoggle button">Hide Soldiers</a>
+  <div class="view-home {{homeactive}}"><span class="icon-home"></span>Home</div>
+  <div class="view-hire {{hireactive}}"><span class="icon-hire"></span>Hire</div>
+  <div class="view-store {{storeactive}}"><span class="icon-store"></span>Store</div>
+  <div class="view-battle {{battleactive}}"><span class="icon-battle"></span>Battle</div>
+  <div class="view-travel {{travelactive}}"><span class="icon-travel"></span>Travel</div>
+<br style="clear:both;" />
 </div>
 {{/if}}
 </template>
 
 <template name="planets">
 {{#if show }}
+<div id="planets">
 <p>Choose a planet:
   <select id="planetSelect">
   	<option value="">-- Select --</option>
@@ -52,6 +75,10 @@
   	{{/each}}
   </select>
 </p>
+{{#each planets}}
+<p>{{name}} - {{distance}}</p>
+{{/each}}
+</div>
 {{/if}}
 </template>
 
@@ -100,24 +127,28 @@
 </template>
 
 <template name="barracks">
+{{#if show}}
 <div id="barracks">
 	<p>The follow soldiers are available for hire:</p>
 	{{#each soldiers}}
 		<div class="soldier">
     <p class="soldierStats">
+    <img src="images/soldiers/soldier{{image}}.jpg" />
   		Name: {{name}}<br />
   		Rating: {{rating}}<br />
       Exp: {{exp}}<br />
       Agility: {{agility}}<br />
       Concentration: {{concentration}}<br />
       Health: {{health}}<br />
-      Wisdom: {{wisdom}}<br />
+      Wisdom: {{wisdom}}
+
     </p>
     <a href="" class="hireButton button" id="{{_id}}"> Hire <a>
 		</div>
     
 	{{/each}}
 </div>
+{{/if}}
 </template>
 
 <template name="chat">
@@ -142,6 +173,9 @@
 {{#if show}}
 <div id="mysoldiers">
   <h3>Your Soldiers</h3>
+  {{#if nosoldiers}}
+    <p>You don't have any soldiers... go hire some to get started!</p>
+  {{/if}}
   <ul>
   {{#each soldiers}}
     <li class="soldier {{#if levelup}}highlight{{/if}}">
@@ -234,6 +268,11 @@
 {{#if show}}
   <div class="challenge">
   <h3>Start a fight!</h3>
+  {{#if noone}}
+    <p>No one to fight... go tell your friends to play!</p>
+  {{else}}
+    <p>Choose a player to challenge:</p>
+  {{/if}}
   {{#each users_online}}
     <p>{{username}} <a class="challenge-user">Fight</a></p>
   {{/each}}
@@ -244,15 +283,30 @@
 <template name="battle">
   {{#if show}}
     <div class="battle">
-    {{#if challenger}}
-      <h3>Battle</h3>
-      <p>Waiting for opponent to respond {{battle_id._id}}</p>
+    {{#if battlestarted}}
+      <div class="team1log">
+      {{#each team1log}}
+        {{.}}<br />
+      {{/each}}
+      </div>
+      <div class="team2log">
+      {{#each team2log}}
+        {{.}}<br />
+      {{/each}}
+      </div>
     {{else}}
-      <h3>Challenge!</h3>
-      <p>{{player1}} has challenged you to a fight!</p>
-      <p class="button"> Accept </p>
-      <p class="button"> Decline </p>
+      {{#if challenger}}
+        <h3>Battle</h3>
+        <p>Waiting for opponent to respond {{battle_id._id}}</p>
+      {{/if}}
+      {{#if challenged}}
+        <h3>Challenge!</h3>
+        <p>{{player1}} has challenged you to a fight!</p>
+        <p class="button accept-button"> Accept </p>
+        <p class="button decline-button"> Decline </p>
+      {{/if}}
     {{/if}}
+
     </div>
   {{/if}}
 </template>

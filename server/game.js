@@ -181,7 +181,7 @@ Meteor.methods({
   start_new_battle: function(player1, player2) {
     check(player1, String);
     check(player2, String);
-    var battle_id = Battles.insert({player1accepted: false, player2accepted: false});
+    var battle_id = Battles.insert({player1ready: false, player2ready: false, play2accepted: false, battlestarted: false});
     Users.update({_id: player1},
                  {$set: {battle_id: battle_id}});
     Users.update({_id: player2},
@@ -249,6 +249,17 @@ Meteor.methods({
             if (dmg == 0) msg = allsoldiers[i].name + ' shot at ' + targ.name + ' but missed.';
             Soldiers.update({_id: allsoldiers[i].gunstats.targ},
                             {$inc: {hp: dmg*-1}});
+            Chat.insert({name: 'Game', message: msg, time: timestamp});
+            if (allsoldiers[i].team == 1) {
+                Battles.update({_id: battle_id},
+                               {$push: {team1log: msg}});
+              }
+              else {
+                Battles.update({_id: battle_id},
+                               {$push: {team2log: msg}});
+              }
+            allsoldiers[i].gunstats.roundsFired += 1;
+
             //check if the game should end
             updatetarg = Soldiers.findOne({_id: allsoldiers[i].gunstats.targ});
             if (updatetarg.hp <= 0) {
@@ -257,13 +268,13 @@ Meteor.methods({
               timestamp = (new Date()).getTime();
               msg = updatetarg.name + ' is dead !!!!!';
               Chat.insert({name: 'Game', message: msg, time: timestamp});
+              Battles.update({_id: battle_id},
+                             {$push: {team1log: msg, team2log: msg}});
               Users.update({battle_id: battle_id},
                            {$set: {battle_id: null}});
               Soldiers.update({battle_id: battle_id},
                            {$set: {battle_id: null}});
-            }            
-            Chat.insert({name: 'Game', message: msg, time: timestamp});
-            allsoldiers[i].gunstats.roundsFired += 1;
+            }
           }
           else {
             //done firing
@@ -459,7 +470,7 @@ Meteor.methods({
     Users.remove({});
     Soldiers.remove({});
     Planets.update({}, {$set: {soldiers: [], soldierCount: 0}}, {multi: true});
-  }
+  }   
 });
 
 Meteor.setInterval(function () {

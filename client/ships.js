@@ -35,21 +35,83 @@ if (Meteor.isClient) {
     }
   });
   //
+  // Home Template
+  //
+  Template.home.show = function () {
+    var result = false;
+    if (Session.get('leftView') == 'home') result = true;
+    return result;
+  };
+  //
   // Controls Template
   //
+  Template.controls.show = function() {
+    return true;
+  };
+  Template.controls.homeactive = function() {
+    result = '';
+    if (Session.get('leftView') == 'home') result = 'view-active';
+    return result;
+  };
+  Template.controls.hireactive = function() {
+    result = '';
+    if (Session.get('leftView') == 'hire') result = 'view-active';
+    return result;
+  };
+  Template.controls.storeactive = function() {
+    result = '';
+    if (Session.get('leftView') == 'store') result = 'view-active';
+    return result;
+  };
+  Template.controls.battleactive = function() {
+    result = '';
+    if (Session.get('leftView') == 'battle') result = 'view-active';
+    return result;
+  };
+  Template.controls.travelactive = function() {
+    result = '';
+    if (Session.get('leftView') == 'travel') result = 'view-active';
+    return result;
+  };
   Template.controls.events({
     'click .soldiertoggle': function(e) {
       TweenLite.set($('.sidebar'), {perspective:400});
       TweenLite.to($('#mysoldiers'), 0.5, {rotationY:90, transformOrigin:'right top', onComplete:toggleSoldierView});
-    }
+    },
+    'click .view-home': function() {
+      Session.set('leftView', 'home');
+    },
+    'click .view-hire': function() {
+      Session.set('leftView', 'hire');
+    },
+    'click .view-store': function() {
+      Session.set('leftView', 'store');
+    },
+    'click .view-battle': function() {
+      Session.set('leftView', 'battle');
+    },
+    'click .view-travel': function() {
+      Session.set('leftView', 'travel');
+    },
   });
   //
   // Planets Template
   //
   Template.planets.show = function () {
-    return true;
+    var result = false;
+    if (Session.get('leftView') == 'travel') result = true;
+    return result;
   };
-
+  Template.planets.distance = function() {
+    var planet = '';
+    var player = Users.findOne({_id: Meteor.userId()});
+    if (player != null) {
+      planet = player.planet
+    }
+    var result = 'You are here.'
+    if (this.distances[planet] != '0') result = this.distances[planet] + ' fuel required';
+    return result;
+  }
   Template.planets.planets = function () {
     return Planets.find();
   };
@@ -72,14 +134,6 @@ if (Meteor.isClient) {
   //
   // Ship Template
   //
-  Template.ship.planet = function () {
-    var planet = '';
-    var player = Users.findOne({_id: Meteor.userId()});
-    if (player !== null) {
-      planet = player.planet;
-    }
-    return planet;
-  };
   Template.ship.resources = function() {
     var resources = ['rRed', 'rGreen', 'rWhite', 'rBlue', 'rBlack'];
     return resources;
@@ -100,6 +154,11 @@ if (Meteor.isClient) {
   //
   // Barracks template
   //
+  Template.barracks.show = function () {
+    var result = false;
+    if (Session.get('leftView') == 'hire') result = true;
+    return result;
+  };
   Template.barracks.soldiers = function() {
     var soldiersHere = [];
     var user = Users.findOne({_id: Meteor.userId()});
@@ -155,6 +214,10 @@ if (Meteor.isClient) {
     }
     return mySoldiers;
   };
+  Template.mysoldiers.nosoldiers = function() {
+    var user = Users.findOne({_id: Meteor.userId()});
+    return (user.soldierCount == 0);
+  }
   Template.mysoldiers.levelup = function() {
     var level = this.level;
     var exp = this.exp;
@@ -234,7 +297,8 @@ if (Meteor.isClient) {
     var stat2 = soldier.concentration;
     var stat3 = soldier.health;
     var stat4 = soldier.wisdom;
-    var avg = (stat1+stat2+stat3+stat4)/4;
+    var stat5 = (soldier.maxhp + 25)/(25/4);
+    var avg = (stat1+stat2+stat3+stat4+stat5)/5;
     var result = Math.round( ((avg-x)/y)*10 ) / 10;
     return result;
   }
@@ -317,15 +381,30 @@ if (Meteor.isClient) {
   //
   // Challenge Template
   //
-  Template.challenge.show = function() {
-    return true;
+  Template.challenge.show = function () {
+    var result = false;
+    if (Session.get('leftView') == 'battle') result = true;
+    return result;
   };
+  Template.challenge.noone = function() {
+    result = false;
+    var users = Users.find({idle: false, _id: {$ne: Meteor.userId()}}).fetch();
+    if (users.length == 0) result = true;
+    return result;
+  }
   Template.challenge.users_online = function() {
     return Users.find({idle: false, _id: {$ne: Meteor.userId()}});
+  };
+  Template.challenge.recent = function() {
+    var last = this.last_keepalive;
+    var now = (new Date()).getTime();
+    var diff = (now - last);
+    return diff;
   };
   Template.challenge.events({
     'click .challenge-user': function(e) {
       Meteor.call('start_new_battle', Meteor.userId(), this._id);
+      Session.set('soldierView', undefined);
     }
   });
   //
@@ -333,6 +412,7 @@ if (Meteor.isClient) {
   //
   Template.battle.show = function() {
     var player = Users.findOne({_id: Meteor.userId()});
+    var battleStarted = Session.get('battleStarted');
     return player.battle_id !== null;
   };
   Template.battle.battle_id = function() {
@@ -347,7 +427,7 @@ if (Meteor.isClient) {
     var challenger = Users.findOne({_id: battle.player1});;
     if (!challenger) return false;
     return challenger.username;
-  }
+  };
   Template.battle.teams = function() {
     var player = Users.findOne({_id: Meteor.userId()});
     var battle = Battles.findOne({_id: player.battle_id});
@@ -355,6 +435,18 @@ if (Meteor.isClient) {
     var team1 = battle.team1;
     var team2 = battle.team2;
     return team1.concat(team2);
+  };
+  Template.battle.team1log = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    if (!battle) return;
+    return battle.team1log.reverse();
+  }
+  Template.battle.team2log = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    if (!battle) return;
+    return battle.team2log.reverse();
   }
   Template.battle.challenger = function() {
     var player = Users.findOne({_id: Meteor.userId()});
@@ -362,6 +454,24 @@ if (Meteor.isClient) {
     if (!battle) return false;
     return (battle.player1 == Meteor.userId());
   };
+  Template.battle.challenged = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    if (!battle) return false;
+    return (battle.player2 == Meteor.userId());
+  };
+  Template.battle.battlestarted = function() {
+    var battleStarted = Session.get('battleStarted');
+    return battleStarted;
+  }
+  Template.battle.events({
+    'click .accept-button': function() {
+      var player = Users.findOne({_id: Meteor.userId()});
+      var battle = Battles.findOne({_id: player.battle_id});
+      Session.set('battleStarted', true);
+      Meteor.call('battleTest', battle._id);
+    }
+  })
 
 }
 
@@ -381,6 +491,10 @@ Meteor.startup(function () {
 
     TweenLite.set($('.sidebar'), {perspective:400});
     Session.set('showSoldiers', true);
+    if (Session.get('leftView') == undefined) {
+      Session.set('leftView', 'home');
+    }
+    
     // Session.set('showConsole', true);
 
     $('.starfield').starfield({

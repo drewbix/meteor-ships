@@ -24,7 +24,7 @@
 }
 html, body { 
     overflow: hidden; 
-    padding: 0px; 
+    padding: 0px;
     margin: 0px; 
     width: 100%; 
     height: 100%;
@@ -73,8 +73,35 @@ ul {
 	top:0;
 }
 #controls {
-	width:300px;
-	padding:10px;
+	width:320px;
+	padding-left:5px;
+}
+#controls div {
+	text-align: center;
+	border-radius: 5px;
+	background-color:#444;
+	color:#999;
+	font-size: 12px;
+	padding:5px 10px;
+	float:left;
+	margin-right:5px;
+	cursor: pointer;
+}
+#controls div:hover {
+	color: #BBB;
+	background-color:#444;
+}
+#controls span {
+	font-size: 32px;
+	width:32px;
+	height:32px;
+	display: block;
+}
+#controls .view-active {
+	color: #EEE;
+}
+#controls .view-active:hover {
+	color: #EEE;
 }
 #chatSmall {
 	position:fixed;
@@ -100,7 +127,6 @@ ul {
 	border-top: 1px solid red;
 	height:230px;
 	z-index: 99;
-	padding:10px;
 }
 #chat span {
 	font-size: 11px;
@@ -114,8 +140,8 @@ ul {
 	padding: 2px;
 }
 #chat input {
-	margin: 0;
-	padding: 5px;
+	margin: 0px;
+	padding: 0px;
 	width:100%;
     border: 1px solid rgba(0,246,10,0.9); 
     -webkit-box-shadow: 
@@ -135,9 +161,10 @@ ul {
 }
 .chats {
 	font-size:13px;
-	height:185px;
-	max-height:185px;
+	height:195px;
+	max-height:195px;
 	overflow-y: hidden;
+	padding:5px;
 }
 .sidebar {
 	width:300px;
@@ -173,7 +200,7 @@ ul {
 	padding: 0;
 }
 #mysoldiers .soldier {
-	height:80px;
+	height:85px;
 	cursor: pointer;
 	font-size:14px;
 }
@@ -262,6 +289,12 @@ ul {
 	background-color: orange;
 
 }
+#home,#store,#barracks,#planets,.challenge {
+	padding: 5px;
+}
+#planets p {
+	margin: 0 0 15px 0;
+}
 #barracks .soldier {
 	transition: all 0.5s ease;
 	background-color: rgba(10,10,10,0.8);
@@ -276,10 +309,20 @@ ul {
 	font-size:13px;
 	overflow:hidden;
 }
+#barracks .soldier img {
+	transition: all 0.5s ease;
+	float: right;
+	width: 40px;
+	height:auto;
+}
+
 #barracks .soldier:hover {
 	height: 135px;
 	max-height: 135px;
 	border:1px solid rgba(0,246,10,0.9);
+}
+#barracks .soldier:hover img {
+	width: 80px;
 }
 #barracks .soldier:hover .hireButton {
 	display: block;
@@ -357,7 +400,7 @@ ul {
   -o-animation:      borderalert 5s infinite; /* Opera 12+ */
   animation:         borderalert 5s infinite; /* IE 10+ */
 }
-.challenge,.battle {
+.battle {
 	background: #333;
 	position:fixed;
 	top:0;
@@ -367,5 +410,64 @@ ul {
 	padding:10px;
 }
 .battle {
-	top: 100px;
+	top: 0px;
+	width: 420px;
+	margin-left:-200px;
 }
+.team1log, .team2log {
+	font-size: 13px;
+	width: 180px;
+	max-height: 400px;
+	overflow-y: scroll;
+}
+.team1log {
+	float: left;
+}
+.team2log {
+	float: right;
+}
+.challenge-user {
+	cursor: pointer;
+}
+
+@font-face {
+	font-family: 'icomoon';
+	src:url('../icomoon.eot?943t32');
+	src:url('../icomoon.eot?#iefix943t32') format('embedded-opentype'),
+		url('../icomoon.woff?943t32') format('woff'),
+		url('../icomoon.ttf?943t32') format('truetype'),
+		url('../icomoon.svg?943t32#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-battle:before {
+	content: "\e601";
+}
+.icon-home:before {
+	content: "\e603";
+}
+.icon-travel:before {
+	content: "\e605";
+}
+.icon-store:before {
+	content: "\e606";
+}
+.icon-hire:before {
+	content: "\e602";
+}
+
