@@ -299,7 +299,7 @@ ul {
 	transition: all 0.5s ease;
 	background-color: rgba(10,10,10,0.8);
 	position: relative;
-	width:300px;
+	width:277px;
 	height:47px;
 	max-height:47px;
 	border:1px solid #666;
@@ -408,23 +408,12 @@ ul {
 	margin-left:-150px;
 	width:300px;
 	padding:10px;
-}
-.battle {
-	top: 0px;
-	width: 420px;
-	margin-left:-200px;
-}
-.team1log, .team2log {
-	font-size: 13px;
-	width: 180px;
-	max-height: 400px;
-	overflow-y: scroll;
-}
-.team1log {
-	float: left;
-}
-.team2log {
-	float: right;
+	-webkit-border-bottom-right-radius: 4px;
+	-webkit-border-bottom-left-radius: 4px;
+	-moz-border-radius-bottomright: 4px;
+	-moz-border-radius-bottomleft: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom-left-radius: 4px;
 }
 .challenge-user {
 	cursor: pointer;

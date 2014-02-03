@@ -181,7 +181,7 @@ Meteor.methods({
   start_new_battle: function(player1, player2) {
     check(player1, String);
     check(player2, String);
-    var battle_id = Battles.insert({player1ready: false, player2ready: false, play2accepted: false, battlestarted: false});
+    var battle_id = Battles.insert({player1ready: false, player2ready: false, status: 'challengesent'});
     Users.update({_id: player1},
                  {$set: {battle_id: battle_id}});
     Users.update({_id: player2},
@@ -288,61 +288,17 @@ Meteor.methods({
     }, 100)
 
   },
-  battleAI: function(battle_id) {
+  battleDecline: function(battle_id) {
     check(battle_id, String);
     var battle = Battles.findOne({_id: battle_id});
-    var team1 = battle.team1;
-    var team2 = battle.team2
-    var allsoldiers = team1.concat(team2);
-    var timestamp,msg,dmg;
-    var totaldmg = 0;
-    var gunStats = {rate_of_fire: 1,
-                    rounds: 1,
-                    roundsFired: 0,
-                    reload_time: 20,
-                    reloading: 0,
-                    minDmg: 4,
-                    maxDmg: 9,
-                    accuracy: 50,
-                    target: null};
-
-    var game = Meteor.setInterval(function() {
-      if (gunStats.reloading > 0 && gunStats.reloading <= gunStats.reload_time) {
-        //reloading
-        gunStats.reloading += 1;
-      } 
-      else if (gunStats.reloading > gunStats.reload_time) {
-        //done reloading
-        gunStats.reloading = 0;
-      }
-      else {
-        //firing
-        if (gunStats.roundsFired < gunStats.rounds) {
-          timestamp = (new Date()).getTime();
-          dmg = rnd(gunStats.minDmg, gunStats.maxDmg);
-          if ( (rnd(1,100)) > gunStats.accuracy ) dmg = 0;
-          msg = soldier.name + ' did ' + dmg + ' damage!';
-          if (dmg == 0) msg = soldier.name + ' missed!';
-          Chat.insert({name: 'Game', message: msg, time: timestamp});
-          gunStats.roundsFired += 1;
-          totaldmg += dmg;
-        }
-        else {
-          //done firing
-          gunStats.reloading = 1;
-          gunStats.roundsFired = 0;
-        }        
-      }
-
-      //end the game
-      if (totaldmg > 100) {
-        Meteor.clearInterval(game);
-        timestamp = (new Date()).getTime();
-        msg = 'game ended';
-        Chat.insert({name: 'Game', message: msg, time: timestamp});        
-      }
-    }, 100)
-
+    Battles.update({_id: battle_id},
+                   {$set: {status: 'battledeclined'}});
+    Users.update({_id: this.userId},
+                 {$set: {battle_id: null}});
+  },
+  battleDeclineConfirm: function() {
+    Users.update({_id: this.userId},
+                 {$set: {battle_id: null}});
   },
   keepalive: function (player_id) {
     check(player_id, String);

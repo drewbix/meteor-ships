@@ -386,14 +386,18 @@ if (Meteor.isClient) {
     if (Session.get('leftView') == 'battle') result = true;
     return result;
   };
+  Template.challenge.nobattle = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    return player.battle_id == null;
+  }
   Template.challenge.noone = function() {
     result = false;
-    var users = Users.find({idle: false, _id: {$ne: Meteor.userId()}}).fetch();
+    var users = Users.find({battle_id: null, idle: false, _id: {$ne: Meteor.userId()}}).fetch();
     if (users.length == 0) result = true;
     return result;
   }
   Template.challenge.users_online = function() {
-    return Users.find({idle: false, _id: {$ne: Meteor.userId()}});
+    return Users.find({battle_id: null, idle: false, _id: {$ne: Meteor.userId()}});
   };
   Template.challenge.recent = function() {
     var last = this.last_keepalive;
@@ -412,13 +416,7 @@ if (Meteor.isClient) {
   //
   Template.battle.show = function() {
     var player = Users.findOne({_id: Meteor.userId()});
-    var battleStarted = Session.get('battleStarted');
-    return player.battle_id !== null;
-  };
-  Template.battle.battle_id = function() {
-    var player = Users.findOne({_id: Meteor.userId()});
-    var battleid = player.battle_id;
-    return Battles.findOne({_id: battleid});
+    return player.battle_id !== null && player.battle_id != undefined;
   };
   Template.battle.player1 = function() {
     var player = Users.findOne({_id: Meteor.userId()});
@@ -441,35 +439,34 @@ if (Meteor.isClient) {
     var battle = Battles.findOne({_id: player.battle_id});
     if (!battle) return;
     return battle.team1log.reverse();
-  }
+  };
   Template.battle.team2log = function() {
     var player = Users.findOne({_id: Meteor.userId()});
     var battle = Battles.findOne({_id: player.battle_id});
     if (!battle) return;
     return battle.team2log.reverse();
-  }
+  };
   Template.battle.challenger = function() {
     var player = Users.findOne({_id: Meteor.userId()});
     var battle = Battles.findOne({_id: player.battle_id});
-    if (!battle) return false;
-    return (battle.player1 == Meteor.userId());
+    return battle.player1 == player._id;
   };
-  Template.battle.challenged = function() {
+  Template.battle.battledeclined = function() {
     var player = Users.findOne({_id: Meteor.userId()});
     var battle = Battles.findOne({_id: player.battle_id});
-    if (!battle) return false;
-    return (battle.player2 == Meteor.userId());
+    return (battle.status == 'battledeclined');
   };
-  Template.battle.battlestarted = function() {
-    var battleStarted = Session.get('battleStarted');
-    return battleStarted;
-  }
   Template.battle.events({
     'click .accept-button': function() {
       var player = Users.findOne({_id: Meteor.userId()});
-      var battle = Battles.findOne({_id: player.battle_id});
-      Session.set('battleStarted', true);
-      Meteor.call('battleTest', battle._id);
+      Meteor.call('battleTest', player.battle_id);
+    },
+    'click .decline-button': function() {
+      var player = Users.findOne({_id: Meteor.userId()});
+      Meteor.call('battleDecline', player.battle_id);
+    },
+    'click .decline-confirm': function() {
+      Meteor.call('battleDeclineConfirm');
     }
   })
 

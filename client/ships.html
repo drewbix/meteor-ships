@@ -268,6 +268,7 @@
 {{#if show}}
   <div class="challenge">
   <h3>Start a fight!</h3>
+  {{#if nobattle}}
   {{#if noone}}
     <p>No one to fight... go tell your friends to play!</p>
   {{else}}
@@ -276,6 +277,9 @@
   {{#each users_online}}
     <p>{{username}} <a class="challenge-user">Fight</a></p>
   {{/each}}
+  {{else}}
+    <p>You can't start a new fight right now</p>
+  {{/if}}
   </div>
 {{/if}}
 </template>
@@ -297,9 +301,12 @@
     {{else}}
       {{#if challenger}}
         <h3>Battle</h3>
-        <p>Waiting for opponent to respond {{battle_id._id}}</p>
+        <p>Waiting for opponent to respond...</p>
+        {{#if battledeclined}}
+          <p>Your opponent declined.</p>
+          <p class="button decline-confirm">Close</p>
       {{/if}}
-      {{#if challenged}}
+      {{else}}
         <h3>Challenge!</h3>
         <p>{{player1}} has challenged you to a fight!</p>
         <p class="button accept-button"> Accept </p>
