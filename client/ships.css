@@ -18,6 +18,7 @@
     50% { border-color: orange; }
     100% { border-color: black; }
 }
+
 /* general */
 * {
 	box-sizing: border-box;
@@ -63,6 +64,17 @@ ul {
 }
 #main {
 	position:relative;
+}
+#loading {
+	z-index: 9999;
+	text-align: center;
+	width: 250px;
+	height: 200px;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -125px;
+	margin-top: -100px;
 }
 #account {
 	border:1px solid #666;
@@ -210,17 +222,31 @@ ul {
 #mysoldiers ul li {
 	padding:5px;
 }
+#mysoldiers .soldier-selected {
+	background-color:rgba(0,255,0,0.4);
+}
+#mysoldiers .soldier-selected:hover {
+	background-color:rgba(0,255,0,0.7);
+}
 .infoRight {
 	float: right;
+	position: relative;
 }
 .infoRight img {
 	width: 60px;
 	height: 60px;
 	display: block;
 }
+.infoRight .deadicon {
+	color: rgba(255,0,0,0.5);
+	font-size:60px;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
 #soldierview {
 	width:400px;
-	height:420px;
+	height:435px;
 	position:fixed;
 	top:50%;
 	left:50%;
@@ -229,6 +255,9 @@ ul {
 	border:1px solid red;
 	background-color:rgba(0,0,0,0.5);
 	padding:0;
+}
+#soldierview ul li {
+	margin: 15px 0;
 }
 .soldierview-inner {
 	padding: 15px;
@@ -418,20 +447,112 @@ ul {
 .challenge-user {
 	cursor: pointer;
 }
+.soldierselect {
+	clear:both;
+	line-height:50px;
+	border:1px solid #777;
+	padding: 5px;
+	margin: 5px 0 15px;
+	cursor: pointer;
+}
+.soldierselect:last-child {
+	margin-bottom: 5px;
+}
+.soldierimg {
+	position: relative;
+	width: 50px;
+	height: 50px;
+	float: left;
+	margin-right: 5px;
+}
+.soldierimg img {
+	position: absolute; 
+	clip:rect(15px 75px 65px 25px); 
+	top: -15px; 
+    left: -25px;
+}
+.soldierselect p {
+	margin: 0;
+	text-align: center;
+	font-size: 20px;
+}
+input[name="soldierselect"] {
+	display:none;
+}
+input[name="soldierselect"]:checked + .soldierselect {
+	border: 1px solid rgba(0,255,0,0.7);
+	background-color: rgba(0,255,0,0.1);
+	color: #FFF;
+}
+input[name="soldierselect"][disabled] + .soldierselect {
+	border: 1px solid #222;
+	color: #777;
+}
+input[name="soldierselect"][disabled] + .soldierselect img {
+	opacity: 0.5;
+}
+.arena {
+	background:#000;
+	width: 650px;
+	position: fixed;
+	left: 50%;
+	top: 0;
+	margin-left: -325px;
+}
+.team1 {
+	margin-bottom: 50px;
+}
+.dmgarea {
+	width:200px;
+	height:50px;
+	background: #000;
+}
+.arenasoldier {
+	width:200px;
+	float:left;
+	margin-right: 5px;
+}
+.arenasoldier:last-child {
+	margin-right: 0;
+}
+.soldierhealthbar {
+	width:190px;
+	height:25px;
+	border:1px solid red;
+}
+.healthpercent {
+	height:100%;
+	background-color: rgba(255,0,0,0.5);
+}
+.arena h2 {
+	text-align: center;
+}
+.arena-win {
+	font-size: 72px;
+	color:rgba(0,255,0,0.67);
+}
+.arena-lose {
+	font-size: 72px;
+	color:rgba(255,0,0,0.67);
+}
+.close-button {
+	width: 150px;
+	margin:0 auto;
+}
 
 @font-face {
-	font-family: 'icomoon';
-	src:url('../icomoon.eot?943t32');
-	src:url('../icomoon.eot?#iefix943t32') format('embedded-opentype'),
-		url('../icomoon.woff?943t32') format('woff'),
-		url('../icomoon.ttf?943t32') format('truetype'),
-		url('../icomoon.svg?943t32#icomoon') format('svg');
+	font-family: 'ships';
+	src:url('../fonts/ships.eot?-3n4id8');
+	src:url('../fonts/ships.eot?#iefix-3n4id8') format('embedded-opentype'),
+		url('../fonts/ships.woff?-3n4id8') format('woff'),
+		url('../fonts/ships.ttf?-3n4id8') format('truetype'),
+		url('../fonts/ships.svg?-3n4id8#ships') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
 
 [class^="icon-"], [class*=" icon-"] {
-	font-family: 'icomoon';
+	font-family: 'ships';
 	speak: none;
 	font-style: normal;
 	font-weight: normal;
@@ -459,4 +580,17 @@ ul {
 .icon-hire:before {
 	content: "\e602";
 }
+.icon-checkmark:before {
+	content: "\e600";
+}
+.icon-plus:before {
+	content: "\e604";
+}
+.icon-skull:before {
+	content: "\e607";
+}
+.icon-cancel:before {
+	content: "\e608";
+}
+
 

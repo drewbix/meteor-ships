@@ -88,7 +88,13 @@
         Logged in as <strong>{{username}}</strong> (<a href="" id="logoutButton">Log out</a>)
     {{else}}
         {{loginButtons align="right"}}
-    {{/if}}	
+    {{/if}}
+    {{#if loading}}
+    <div id="loading">
+      <img src="images/loading.gif" />
+      <p>Waiting on server...</p>
+    </div>
+    {{/if}}
 </div>
 </template>
 
@@ -178,8 +184,11 @@
   {{/if}}
   <ul>
   {{#each soldiers}}
-    <li class="soldier {{#if levelup}}highlight{{/if}}">
+    <li class="soldier {{#if levelup}}highlight{{/if}} {{#if soldierselected}}soldier-selected{{/if}}">
     <div class="infoRight">
+      {{#if dead}}
+      <div class="deadicon"><span class="icon-skull"></span></div>
+      {{/if}}
     <img src="images/soldiers/soldier{{image}}.jpg" />
     {{name}}
     </div>
@@ -221,39 +230,36 @@
           {{/if}}
         </div>
         <div class="soldierhp">
-          <p>Hitpoints: {{soldier.hp}} / {{soldier.maxhp}}</p>
-          <p>Rating: {{rating}}</p>
+          <p>Hitpoints: {{soldier.hp}} / {{soldier.maxhp}} | Rating: {{rating}}</p>
         </div>
         <div class="soldierexp">
-        Exp: {{soldier.exp}}
-        <br />
-        To Next: {{tonext}}
+          Exp: {{soldier.exp}} | To Next: {{tonext}}
         </div>
         <h3>Stats</h3>
         <ul>
           <li>
-            Agility: {{soldier.agility}}
             {{#if hascp}}
-              <a class="addagility" href="#">+</a>
+              <a class="button addagility" href="#"><span class="icon-plus"></span></a>
             {{/if}}
+            Agility: {{soldier.agility}}
           </li>
           <li>
-            Concentration: {{soldier.concentration}}
             {{#if hascp}}
-              <a class="addconcentration" href="#">+</a>
+              <a class="button addconcentration" href="#"><span class="icon-plus"></span></a>
             {{/if}}
+            Concentration: {{soldier.concentration}}
           </li>        
           <li>
-            Health: {{soldier.health}}
             {{#if hascp}}
-              <a class="addhealth" href="#">+</a>
+              <a class="button addhealth" href="#"><span class="icon-plus"></span></a>
             {{/if}}
+            Health: {{soldier.health}}
           </li>
           <li>
-            Wisdom: {{soldier.wisdom}}
             {{#if hascp}}
-              <a class="addwisdom" href="#">+</a>
+              <a class="button addwisdom" href="#"><span class="icon-plus"></span></a>
             {{/if}}
+            Wisdom: {{soldier.wisdom}}
           </li>
         </ul>
         <p>Character Points: {{soldier.cp}}</p>
@@ -269,14 +275,14 @@
   <div class="challenge">
   <h3>Start a fight!</h3>
   {{#if nobattle}}
-  {{#if noone}}
-    <p>No one to fight... go tell your friends to play!</p>
-  {{else}}
-    <p>Choose a player to challenge:</p>
-  {{/if}}
-  {{#each users_online}}
-    <p>{{username}} <a class="challenge-user">Fight</a></p>
-  {{/each}}
+    {{#if noone}}
+      <p>No one to fight... go tell your friends to play!</p>
+    {{else}}
+      <p>Choose a player to challenge:</p>
+    {{/if}}
+    {{#each users_online}}
+      <p>{{username}} <a class="challenge-user">Fight</a></p>
+    {{/each}}
   {{else}}
     <p>You can't start a new fight right now</p>
   {{/if}}
@@ -287,33 +293,101 @@
 <template name="battle">
   {{#if show}}
     <div class="battle">
-    {{#if battlestarted}}
-      <div class="team1log">
-      {{#each team1log}}
-        {{.}}<br />
+    {{#if battleaccepted}}
+      <h3>Select 3 of your soldiers</h3>
+      {{#each soldiers}}
+      <label>
+        <input type="checkbox" name="soldierselect" value="{{_id}}" />
+        <div class="soldierselect">
+          <div class="soldierimg">
+            <img src="images/soldiers/soldier{{image}}.jpg" class="clip" />
+          </div>
+          <p>{{name}}</p>
+        </div>
+      </label>
       {{/each}}
-      </div>
-      <div class="team2log">
-      {{#each team2log}}
-        {{.}}<br />
-      {{/each}}
-      </div>
-    {{else}}
-      {{#if challenger}}
-        <h3>Battle</h3>
-        <p>Waiting for opponent to respond...</p>
-        {{#if battledeclined}}
-          <p>Your opponent declined.</p>
-          <p class="button decline-confirm">Close</p>
-      {{/if}}
+      {{#if notready}}
+        <div class="button ready-button"> Ready! </div>
       {{else}}
-        <h3>Challenge!</h3>
-        <p>{{player1}} has challenged you to a fight!</p>
-        <p class="button accept-button"> Accept </p>
-        <p class="button decline-button"> Decline </p>
+        {{#if challenger}}
+          {{#if player2notready}}
+            <p>Waiting for opponent...</p>
+          {{else}}
+            <p>Opponent is ready!</p>
+            <div class="button fight-button"> Fight! </div>
+          {{/if}}
+        {{else}}
+          <p>Waiting for opponent...</p>
+        {{/if}}
+      {{/if}}
+    {{else}}
+      {{#if battlestarted}}
+        {{> arena}}
+      {{else}}
+        {{#if challenger}}
+          <h3>Battle</h3>
+          <p>Waiting for opponent to respond...</p>
+          {{#if battledeclined}}
+            <p>Your opponent declined.</p>
+            <p class="button decline-confirm">Close</p>
+          {{/if}}
+        {{else}}
+          <h3>Challenge!</h3>
+          <p>{{player1}} has challenged you to a fight!</p>
+          <p class="button accept-button">Accept</p>
+          <p class="button decline-button">Decline</p>
+        {{/if}}
       {{/if}}
     {{/if}}
 
     </div>
   {{/if}}
+</template>
+
+<template name="arena">
+  <div class="arena">
+    <div class="team1">
+      {{#each team1}}
+        <div class="arenasoldier">
+          <div class="dmgarea"></div>
+          <div class="soldierinfo">
+            <img src="images/soldiers/soldier{{image}}.jpg" />
+            <p>{{name}}: {{hp}} / {{maxhp}}</p>
+            <div class="soldierhealthbar">
+              <div class="healthpercent" style="width: {{healthpercent}}%"></div>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+      <br style="clear:both" />
+    </div>
+    
+    {{#if gameover}}
+      {{#if winner}}
+        <h2 class="arena-win">You Win</h2>
+      {{else}}
+        <h2 class="arena-lose">You Lose</h2>
+      {{/if}}
+      <div class="button close-button">Close</div>
+    {{else}}
+      <h2>{{player1.username}}</h2>
+      <h2>vs</h2>
+      <h2>{{player2.username}}</h2>
+    {{/if}}
+    <div class="team2">
+      {{#each team2}}
+        <div class="arenasoldier">
+          <div class="dmgarea"></div>
+          <div class="soldierinfo">
+            <img src="images/soldiers/soldier{{image}}.jpg" />
+            <p>{{name}}: {{hp}} / {{maxhp}}</p>
+            <div class="soldierhealthbar">
+              <div class="healthpercent" style="width: {{healthpercent}}%"></div>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+      <br style="clear:both" />
+    </div>
+  </div>
 </template>

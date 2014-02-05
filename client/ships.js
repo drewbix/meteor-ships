@@ -27,7 +27,18 @@ if (Meteor.isClient) {
   Template.player.username = function () {
     return Meteor.user().username;
   };
-
+  Template.player.loading = function() {
+    result = false;
+    var test = Users.find().fetch();
+    if (test == null || test == undefined) {
+      result = true;
+    }
+    else {
+      if (test[0] && !('fuel' in test[0])) result = true;
+    }
+    
+    return result
+  }
   Template.player.events({
     'click a#logoutButton': function (evt) {
       Meteor.logout();
@@ -227,6 +238,17 @@ if (Meteor.isClient) {
     }
     return false;
   };
+  Template.mysoldiers.soldierselected = function() {
+    var result = false;
+    var selected = Session.get('soldierView');
+    if (selected != undefined) {
+      if (selected == this._id) result = true;
+    }
+    return result;
+  };
+  Template.mysoldiers.dead = function() {
+    return this.hp <= 0;
+  }
   Template.mysoldiers.next = function() {
     var level = this.level;
     var exp = this.exp;
@@ -414,8 +436,15 @@ if (Meteor.isClient) {
   //
   // Battle Template
   //
+  Template.battle.rendered = function() {
+    var max = 3;
+    var checkboxes = $('input[name="soldierselect"]');
+    var current = checkboxes.filter(':checked').length;
+    checkboxes.filter(':not(:checked)').prop('disabled', current >= max);
+  }
   Template.battle.show = function() {
     var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
     return player.battle_id !== null && player.battle_id != undefined;
   };
   Template.battle.player1 = function() {
@@ -434,22 +463,47 @@ if (Meteor.isClient) {
     var team2 = battle.team2;
     return team1.concat(team2);
   };
-  Template.battle.team1log = function() {
+  Template.battle.soldiers = function() {
+    var mySoldiers = [];
+    var user = Users.findOne({_id: Meteor.userId()});
+    if (user !== null && user !== undefined) {
+      var allSoldiers = user.soldiers;
+      if (allSoldiers !== null && allSoldiers !== undefined) {
+        for (var i = 0; i < allSoldiers.length; i++) {
+          mySoldiers.push(Soldiers.findOne({_id: allSoldiers[i]}));
+        }
+      }
+    }
+    return mySoldiers;
+  };
+  Template.battle.notready = function() {
     var player = Users.findOne({_id: Meteor.userId()});
     var battle = Battles.findOne({_id: player.battle_id});
-    if (!battle) return;
-    return battle.team1log.reverse();
+    if (battle.player1 == player._id) {
+      return !battle.player1ready;
+    } else {
+      return !battle.player2ready;
+    }
   };
-  Template.battle.team2log = function() {
+  Template.battle.player2notready = function() {
     var player = Users.findOne({_id: Meteor.userId()});
     var battle = Battles.findOne({_id: player.battle_id});
-    if (!battle) return;
-    return battle.team2log.reverse();
-  };
+    return !battle.player2ready;
+  }
   Template.battle.challenger = function() {
     var player = Users.findOne({_id: Meteor.userId()});
     var battle = Battles.findOne({_id: player.battle_id});
     return battle.player1 == player._id;
+  };
+  Template.battle.battlestarted = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id}); 
+    return (battle.status == 'battlestarted' || battle.status == 'battlefinished')
+  };
+  Template.battle.battleaccepted = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    return (battle.status == 'battleaccepted')
   };
   Template.battle.battledeclined = function() {
     var player = Users.findOne({_id: Meteor.userId()});
@@ -459,7 +513,7 @@ if (Meteor.isClient) {
   Template.battle.events({
     'click .accept-button': function() {
       var player = Users.findOne({_id: Meteor.userId()});
-      Meteor.call('battleTest', player.battle_id);
+      Meteor.call('battleAccept', player.battle_id);
     },
     'click .decline-button': function() {
       var player = Users.findOne({_id: Meteor.userId()});
@@ -467,8 +521,82 @@ if (Meteor.isClient) {
     },
     'click .decline-confirm': function() {
       Meteor.call('battleDeclineConfirm');
+    },
+    'change input[name="soldierselect"]': function() {
+      var max = 3;
+      var checkboxes = $('input[name="soldierselect"]');
+      var current = checkboxes.filter(':checked').length;
+      checkboxes.filter(':not(:checked)').prop('disabled', current >= max);
+    },
+    'click .ready-button': function() {
+      var checked = $('input[name="soldierselect"]:checked');
+      if (checked.length == 3) {
+        var soldiers = checked[0].value+','+checked[1].value+','+checked[2].value;
+        Meteor.call('setSoldiers', soldiers);
+      } else {
+        alert('Please select 3 soldiers');
+      }
+    },
+    'click .fight-button': function() {
+      var player = Users.findOne({_id: Meteor.userId()});
+      Meteor.call('battleStart', player.battle_id);
     }
   })
+  //
+  // Arena Template
+  //
+  Template.arena.healthpercent = function() {
+    if (this.hp > 0) {
+      return (this.hp / this.maxhp) * 100;
+    } else {
+      return 0;
+    }
+  };
+  Template.arena.gameover = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id}); 
+    return battle.status == 'battlefinished';
+  };
+  Template.arena.winner = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id}); 
+    return battle.winner == player._id;
+  };
+  Template.arena.player1 = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    return Users.findOne({_id: battle.player1});
+  };
+  Template.arena.team1 = function() {
+    var soldiers = [];
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    var allSoldiers = battle.team1;
+    for (var i = 0; i < allSoldiers.length; i++) {
+      soldiers.push(Soldiers.findOne({_id: allSoldiers[i]}));
+    }
+    return soldiers;
+  };
+  Template.arena.player2 = function() {
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    return Users.findOne({_id: battle.player2});
+  };
+  Template.arena.team2 = function() {
+    var soldiers = [];
+    var player = Users.findOne({_id: Meteor.userId()});
+    var battle = Battles.findOne({_id: player.battle_id});
+    var allSoldiers = battle.team2;
+    for (var i = 0; i < allSoldiers.length; i++) {
+      soldiers.push(Soldiers.findOne({_id: allSoldiers[i]}));
+    }
+    return soldiers;
+  };
+  Template.arena.events({
+    'click .close-button': function() {
+      Meteor.call('battleClose');
+    }
+  });
 
 }
 

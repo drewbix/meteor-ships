@@ -76,16 +76,16 @@ function createSoldier() {
 
 function randomGun() {
   var rounds = rnd(1,5);
-  var min = Math.floor(10/rounds);
-  var max = Math.floor(50/rounds);
+  var min = Math.floor(8/rounds);
+  var max = Math.floor(30/rounds);
   var gun = {rate_of_fire: 1,
               rounds: rounds,
               roundsFired: 0,
-              reload_time: rnd(20,40),
+              reload_time: rnd(30,60),
               reloading: 0,
               minDmg: min,
               maxDmg: max,
-              accuracy: rnd(66,75),
+              accuracy: rnd(50,75),
               targ: null};
   return gun;
 }
@@ -199,23 +199,24 @@ Meteor.methods({
       Soldiers.update({_id: team2[i]},
                       {$set: {battle_id: battle_id, team: 2}});
     }
-    Battles.update({_id: battle_id}, {$set: {player1: player1, player2: player2, team1: team1, team2: team2}});
+    Battles.update({_id: battle_id}, {$set: {player1: player1, player2: player2, team1: undefined, team2: undefined}});
 
   },
-  battleTest: function(battle_id) {
+  battle: function(battle_id) {
     check(battle_id, String);
     var battle = Battles.findOne({_id: battle_id});
     var team1 = battle.team1;
     var team2 = battle.team2;
     var teams = team1.concat(team2);
     var allsoldiers = Soldiers.find({battle_id: battle_id}).fetch();
+    var timestamp,msg,dmg,targ,updatetarg,winner;
 
+    Battles.update({_id: battle_id},
+                   {$set: {status: 'battlestarted'}});
 
-    var timestamp,msg,dmg,targ,updatetarg;
-
-      for (var i = 0; i < allsoldiers.length; i++) {
-        allsoldiers[i].gunstats = randomGun();
-      }
+    for (var i = 0; i < allsoldiers.length; i++) {
+      allsoldiers[i].gunstats = randomGun();
+    }
 
     var game = Meteor.setInterval(function() {
       for (var i = 0; i < allsoldiers.length; i++) {
@@ -263,17 +264,23 @@ Meteor.methods({
             //check if the game should end
             updatetarg = Soldiers.findOne({_id: allsoldiers[i].gunstats.targ});
             if (updatetarg.hp <= 0) {
+              //someone died, figure out who won
+              if (allsoldiers[i].team == 1) {
+                winner = battle.player1;
+              }
+              else {
+                winner = battle.player2;
+              }
+              //game ending actions
               Meteor.clearInterval(game);
               i = allsoldiers.length;
               timestamp = (new Date()).getTime();
               msg = updatetarg.name + ' is dead !!!!!';
               Chat.insert({name: 'Game', message: msg, time: timestamp});
               Battles.update({_id: battle_id},
-                             {$push: {team1log: msg, team2log: msg}});
-              Users.update({battle_id: battle_id},
-                           {$set: {battle_id: null}});
+                             {$set: {status: 'battlefinished', winner: winner}, $push: {team1log: msg, team2log: msg}});
               Soldiers.update({battle_id: battle_id},
-                           {$set: {battle_id: null}});
+                              {$set: {battle_id: null}});
             }
           }
           else {
@@ -288,6 +295,12 @@ Meteor.methods({
     }, 100)
 
   },
+  battleAccept: function(battle_id) {
+    check(battle_id, String);
+    var battle = Battles.findOne({_id: battle_id});
+    Battles.update({_id: battle_id},
+                   {$set: {status: 'battleaccepted'}});
+  },
   battleDecline: function(battle_id) {
     check(battle_id, String);
     var battle = Battles.findOne({_id: battle_id});
@@ -297,6 +310,43 @@ Meteor.methods({
                  {$set: {battle_id: null}});
   },
   battleDeclineConfirm: function() {
+    Users.update({_id: this.userId},
+                 {$set: {battle_id: null}});
+  },
+  setSoldiers: function(soldier_ids) {
+    check(soldier_ids, String);
+    var soldiers = soldier_ids.split(',');
+    var player = Users.findOne({_id: this.userId});
+    var battle = Battles.findOne({_id: player.battle_id});
+    var i,timestamp = (new Date()).getTime();
+
+    if (battle.player1 == this.userId) {
+      for (i = 0; i < soldiers.length; i++) {
+        Soldiers.update({_id: soldiers[i]},
+                        {$set: {battle_id: player.battle_id, team: 1}});
+      }
+      Battles.update({_id: player.battle_id},
+                     {$set: {player1ready: true, team1: soldiers}});
+    }
+
+    if (battle.player2 == this.userId) {
+      for (i = 0; i < soldiers.length; i++) {
+        Soldiers.update({_id: soldiers[i]},
+                        {$set: {battle_id: player.battle_id, team: 2}});
+      }
+      Battles.update({_id: player.battle_id},
+                     {$set: {player2ready: true, team2: soldiers}});
+    }
+  },
+  battleStart: function(battle_id) {
+    check(battle_id, String);
+    //check if both players are ready
+    var battle = Battles.find({_id: battle_id}).fetch();
+    if (battle[0].player1ready && battle[0].player2ready) {
+      Meteor.call('battle', battle_id)
+    }
+  },
+  battleClose: function() {
     Users.update({_id: this.userId},
                  {$set: {battle_id: null}});
   },
@@ -425,8 +475,14 @@ Meteor.methods({
     //TODO: make admin accounts
     Users.remove({});
     Soldiers.remove({});
+    Battles.remove({});
     Planets.update({}, {$set: {soldiers: [], soldierCount: 0}}, {multi: true});
-  }   
+  },
+  resetBattles: function() {
+    //for dev purposes only! only to be called manually
+    //TODO: make admin accounts
+    Users.update({}, {$set: {battle_id: null}}, {multi: true});
+  }  
 });
 
 Meteor.setInterval(function () {
@@ -456,6 +512,7 @@ Meteor.startup(function () {
   Chat.remove({});
   Battles.remove({});
   Users.update({}, {$set: {battle_id: null}}, {multi: true});
+  Soldiers.update({}, {$set: {battle_id: null}}, {multi: true});
   populate();
   if (Planets.find().count() == 0) {
     Planets.insert({name: "Jute",
