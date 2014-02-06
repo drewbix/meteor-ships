@@ -552,6 +552,9 @@ if (Meteor.isClient) {
       return 0;
     }
   };
+  Template.arena.dead = function() {
+    return this.hp <= 0;
+  }
   Template.arena.gameover = function() {
     var player = Users.findOne({_id: Meteor.userId()});
     var battle = Battles.findOne({_id: player.battle_id}); 

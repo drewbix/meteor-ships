@@ -520,6 +520,20 @@ input[name="soldierselect"][disabled] + .soldierselect img {
 	height:25px;
 	border:1px solid red;
 }
+.soldierinfo {
+	position: relative;
+}
+.soldierinfo img {
+	width: 100px;
+	height: 100px;
+}
+.deadsoldier {
+	position:absolute;
+	font-size: 80px;
+	top: 0;
+	left: 0;
+	color: rgba(255,0,0,0.67);
+}
 .healthpercent {
 	height:100%;
 	background-color: rgba(255,0,0,0.5);
