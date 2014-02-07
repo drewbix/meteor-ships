@@ -1,3 +1,42 @@
+function rnd(minv, maxv){
+  if (maxv < minv) return 0;
+  return Math.floor(Math.random()*(maxv-minv+1)) + minv;
+}
+
+function rndColor() {
+  var blah = rnd(1,3);
+  if (blah == 1) return '#F00';
+  if (blah == 2) return '#0F0';
+  if (blah == 3) return '#00F';
+}
+
+function connect(div1, div2) {
+    var off1 = getOffset(div1);
+    var off2 = getOffset(div2);
+    // get center of div 1
+    var x1 = off1.left + off1.width / 2;
+    var y1 = off1.top + off1.height / 2;
+    // get middle bottom of div 2
+    var x2 = off2.left + off2.width / 2;
+    var y2 = off2.top + off2.height;
+    // distance
+    var length = Math.sqrt(((x2-x1) * (x2-x1)) + ((y2-y1) * (y2-y1)));
+    // center
+    var cx = ((x1 + x2) / 2) - (length / 2);
+    var cy = ((y1 + y2) / 2) - (2 / 2);
+    // angle
+    var angle = Math.atan2((y1-y2),(x1-x2))*(180/Math.PI);
+    // make hr
+    var htmlLine = "<div class='laser' style='left:" + cx + "px; top:" + cy + "px; width:" + length + "px; -moz-transform:rotate(" + angle + "deg); -webkit-transform:rotate(" + angle + "deg); -o-transform:rotate(" + angle + "deg); -ms-transform:rotate(" + angle + "deg); transform:rotate(" + angle + "deg);' />";
+    //
+    console.log(htmlLine);
+    $(div1).append(htmlLine); 
+}
+
+function getOffset( el ) {
+    return { top: el.offset().top, left: el.offset().left, width: el.width(), height: el.height()};
+}
+
 function getDistance(planet1, planet2) {
   var planet = Planets.findOne({name: planet1});
   var distance = planet.distances[planet2];
@@ -609,32 +648,32 @@ if (Meteor.isClient) {
 
 Meteor.startup(function () {
 
-    $(function() {
-      $(document).on('keyup', function(e) { 
-        if(e.which == 192) {
-          toggleConsole();
-        }
-      });
+  $(function() {
+    $(document).on('keyup', function(e) { 
+      if(e.which == 192) {
+        toggleConsole();
+      }
     });
+  });
 
-    TweenLite.set($('.sidebar'), {perspective:400});
-    Session.set('showSoldiers', true);
-    if (Session.get('leftView') == undefined) {
-      Session.set('leftView', 'home');
-    }
-    
-    // Session.set('showConsole', true);
+  TweenLite.set($('.sidebar'), {perspective:400});
+  Session.set('showSoldiers', true);
+  if (Session.get('leftView') == undefined) {
+    Session.set('leftView', 'home');
+  }
+  
+  // Session.set('showConsole', true);
 
-    $('.starfield').starfield({
-      starColor:  'rgba(255,255,255,1)',
-      bgColor:        'rgba(0,0,0,1)',
-      mouseColor: 'rgba(0,0,0,0.2)',
-      fps:            15,
-      speed:      0.15,
-      quantity:   512,
-      ratio:      256,
-      class:      'starfield'
-    });
+  $('.starfield').starfield({
+    starColor:  'rgba(255,255,255,1)',
+    bgColor:        'rgba(0,0,0,1)',
+    mouseColor: 'rgba(0,0,0,0.2)',
+    fps:            15,
+    speed:      0.15,
+    quantity:   512,
+    ratio:      256,
+    class:      'starfield'
+  });
 
   // subscribe to all the players, the game i'm in, and all
   // the words in that game.
@@ -644,8 +683,98 @@ Meteor.startup(function () {
     Meteor.subscribe('soldiers');
     Meteor.subscribe('chat');
     Meteor.subscribe('battles');
+    Meteor.subscribe('battlelog');
 
   });
+
+    var p = Users.find({_id: Meteor.userId(), battle_id: {$ne: null}});
+    var battlehandler;
+    var handle = p.observe({
+      added: function(newdoc) {
+        console.log('player added: ' + newdoc.battle_id);
+        if (newdoc.battle_id != null && newdoc.battle_id != undefined) {
+          b = BattleLog.find({battle_id: newdoc.battle_id});
+          if (Session.get('battle') == undefined) {
+            Session.set('battle', newdoc.battle_id)
+            console.log('battlestarted?');
+            battlehandler = b.observeChanges({
+              added: function(id, msg) {
+                // console.log('battle add ' + id + ': ' + msg.soldier + ',' + msg.target + ', dmg: ' + msg.damage);
+                var soldierdiv = $('.' + msg.soldier);
+                var targetdiv = $('.' + msg.target);
+                connect(soldierdiv, targetdiv, rndColor(), 5);
+                if (msg.damage > 0) {
+                  var p = $('<div/>').addClass('dmg').css('left', rnd(0,100) + 'px').html(msg.damage);
+                  $('.' + msg.target).append(p);
+                } else if (msg.damage == 0) {
+                  var p = $('<div/>').addClass('miss').css('left', rnd(0,100) + 'px').html('miss');
+                  $('.' + msg.target).append(p);
+                }
+              },
+              changed: function(id, msg) {
+                // console.log('battlechange ' + id + ': ' + msg.soldier + ',' + msg.target + ', dmg: ' + msg.damage);
+                var soldierdiv = $('.' + msg.soldier);
+                var targetdiv = $('.' + msg.target);
+                connect(soldierdiv, targetdiv, rndColor(), 5);
+                if (msg.damage > 0) {
+                  var p = $('<div/>').addClass('dmg').css('left', rnd(0,100) + 'px').html(msg.damage);
+                  $('.' + msg.target).append(p);
+                } else if (msg.damage == 0) {
+                  var p = $('<div/>').addClass('miss').css('left', rnd(0,100) + 'px').html('miss');
+                  $('.' + msg.target).append(p);
+                }
+              }
+            });
+          }
+        }
+      },
+      changed: function(newdoc, old) {
+        console.log('player changed: ' + newdoc.battle_id + ': ' + old.battle_id);
+        if (newdoc.battle_id != null && newdoc.battle_id != undefined) {
+          b = BattleLog.find({battle_id: newdoc.battle_id});
+          if (Session.get('battle') == undefined) {
+            Session.set('battle', newdoc.battle_id)
+            console.log('battlestarted?');
+            battlehandler = b.observeChanges({
+              added: function(id, msg) {
+                // console.log('battle add ' + id + ': ' + msg.soldier + ',' + msg.target + ', dmg: ' + msg.damage);
+                var soldierdiv = $('.' + msg.soldier);
+                var targetdiv = $('.' + msg.target);
+                connect(soldierdiv, targetdiv, rndColor(), 5);
+                if (msg.damage > 0) {
+                  var p = $('<div/>').addClass('dmg').css('left', rnd(0,100) + 'px').html(msg.damage);
+                  $('.' + msg.target).append(p);
+                } else if (msg.damage == 0) {
+                  var p = $('<div/>').addClass('miss').css('left', rnd(0,100) + 'px').html('miss');
+                  $('.' + msg.target).append(p);
+                }
+              },
+              changed: function(id, msg) {
+                // console.log('battlechange ' + id + ': ' + msg.soldier + ',' + msg.target + ', dmg: ' + msg.damage);
+                var soldierdiv = $('.' + msg.soldier);
+                var targetdiv = $('.' + msg.target);
+                connect(soldierdiv, targetdiv, rndColor(), 5);
+                if (msg.damage > 0) {
+                  var p = $('<div/>').addClass('dmg').css('left', rnd(0,100) + 'px').html(msg.damage);
+                  $('.' + msg.target).append(p);
+                } else if (msg.damage == 0) {
+                  var p = $('<div/>').addClass('miss').css('left', rnd(0,100) + 'px').html('miss');
+                  $('.' + msg.target).append(p);
+                }
+              }
+            });
+          }
+        }
+      },
+      removed: function(old) {
+        console.log('unsetting ' + old.battle_id);
+        if (battlehandler) {
+          battlehandler.stop();
+          console.log('battlehandler stopped');
+        }
+        Session.set('battle', undefined);
+      }
+    });
 
   // send keepalives so the server can tell when we go away.
   //

@@ -75,7 +75,7 @@ function createSoldier() {
 }
 
 function randomGun() {
-  var rounds = rnd(1,5);
+  var rounds = rnd(1,1);
   var min = Math.floor(8/rounds);
   var max = Math.floor(30/rounds);
   var gun = {rate_of_fire: 1,
@@ -189,16 +189,12 @@ Meteor.methods({
     var p = Users.find({battle_id: battle_id}).fetch();
     var p1 = Users.findOne({_id: player1});
     var p2 = Users.findOne({_id: player2});
-    var team1 = p1.soldiers;
-    var team2 = p2.soldiers;
-    for (var i = 0; i < team1.length; i++) {
-      Soldiers.update({_id: team1[i]},
-                      {$set: {battle_id: battle_id, team: 1}});
-    }
-    for (i = 0; i < team2.length; i++) {
-      Soldiers.update({_id: team2[i]},
-                      {$set: {battle_id: battle_id, team: 2}});
-    }
+    var team1 = p1.soldiers || [];
+    var team2 = p2.soldiers || [];
+    Soldiers.update({_id: {$in: team1}},
+                    {$set: {battle_id: battle_id, team: 1}});
+    Soldiers.update({_id: {$in: team2}},
+                    {$set: {battle_id: battle_id, team: 2}});
     Battles.update({_id: battle_id}, {$set: {player1: player1, player2: player2, team1: undefined, team2: undefined}});
 
   },
@@ -248,6 +244,7 @@ Meteor.methods({
             targ = Soldiers.findOne({_id: allsoldiers[i].gunstats.targ});
             msg = allsoldiers[i].name + ' did ' + dmg + ' damage to ' + targ.name + '!';
             if (dmg == 0) msg = allsoldiers[i].name + ' shot at ' + targ.name + ' but missed.';
+            BattleLog.insert({battle_id: battle_id, soldier: allsoldiers[i]._id, target: allsoldiers[i].gunstats.targ, damage: dmg});
             Soldiers.update({_id: allsoldiers[i].gunstats.targ},
                             {$inc: {hp: dmg*-1}});
             Chat.insert({name: 'Game', message: msg, time: timestamp});

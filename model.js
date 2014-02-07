@@ -3,6 +3,7 @@ Planets = new Meteor.Collection('planets');
 Soldiers = new Meteor.Collection('soldiers');
 Chat = new Meteor.Collection('chat');
 Battles = new Meteor.Collection('battles');
+BattleLog = new Meteor.Collection('battlelog');
 
 exp2level = [0, 0, 50, 100, 200, 400, 800, 1600, 3000, 6000, 12000, 
            24000, 48000, 100000, 200000, 300000, 
@@ -27,5 +28,8 @@ if (Meteor.isServer) {
   });
   Meteor.publish('battles', function() {
     return Battles.find();
+  });
+  Meteor.publish('battlelog', function() {
+    return BattleLog.find();
   });
 }
