@@ -30,9 +30,7 @@
 </body>
 
 <template name="starfield">
-{{#constant}}
   <div class="starfield"></div>
-{{/constant}}
 </template>
 
 <template name="home">
@@ -87,7 +85,7 @@
     {{#if currentUser}}
         Logged in as <strong>{{username}}</strong> (<a href="" id="logoutButton">Log out</a>)
     {{else}}
-        {{loginButtons align="right"}}
+        {{> loginButtons align="right"}}
     {{/if}}
     {{#if loading}}
     <div id="loading">
@@ -149,7 +147,7 @@
       Wisdom: {{wisdom}}
 
     </p>
-    <a href="" class="hireButton button" id="{{_id}}"> Hire <a>
+    <a href="" class="hireButton button" id="{{_id}}"> Hire </a>
 		</div>
     
 	{{/each}}
@@ -222,7 +220,7 @@
             {{#each actions}}
             <label class="{{actionselected}}">
               {{.}}
-              <input type="radio" name="actionselect" value="{{.}}" {{#isChecked}} checked{{/isChecked}}/>
+              <input type="radio" name="actionselect" value="{{.}}" checked={{isChecked}} />
             </label>
             {{/each}}
           {{else}}
@@ -349,16 +347,12 @@
     <div class="team1">
       {{#each team1}}
         <div class="arenasoldier">
-          {{#constant}}
           <div class="dmgarea {{_id}}"></div>
-          {{/constant}}
           <div class="soldierinfo">
             {{#if dead}}
             <div class="deadsoldier"><span class="icon-skull"></span></div>
             {{/if}}
-            {{#constant}}
             <img src="images/soldiers/soldier{{image}}.jpg" />
-            {{/constant}}
             <p>{{name}}: {{hp}} / {{maxhp}}</p>
             <div class="soldierhealthbar">
               <div class="healthpercent" style="width: {{healthpercent}}%"></div>
@@ -385,16 +379,12 @@
     <div class="team2">
       {{#each team2}}
         <div class="arenasoldier">
-          {{#constant}}
           <div class="dmgarea {{_id}}"></div>
-          {{/constant}}
           <div class="soldierinfo">
             {{#if dead}}
             <div class="deadsoldier"><span class="icon-skull"></span></div>
             {{/if}}
-            {{#constant}}
             <img src="images/soldiers/soldier{{image}}.jpg" />
-            {{/constant}}
             <p>{{name}}: {{hp}} / {{maxhp}}</p>
             <div class="soldierhealthbar">
               <div class="healthpercent" style="width: {{healthpercent}}%"></div>

@@ -385,7 +385,7 @@ if (Meteor.isClient) {
     var a = this;
     var soldierid = Session.get('soldierView');
     soldier = Soldiers.findOne({_id: soldierid});
-    var result = '';
+    var result = false;
     if (soldier.action == a) result = 'checked';
     return result;
   };
